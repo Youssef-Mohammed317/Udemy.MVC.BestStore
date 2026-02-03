@@ -11,7 +11,7 @@ namespace BestStore.Web.Mapping
     {
         public ProductMappingProfile()
         {
-            CreateMap<ProductDto, ProductViewModel>();
+            CreateMap<ProductDto, ProductViewModel>().ReverseMap();
 
             CreateMap<CreateProductViewModel, CreateProductDto>();
 

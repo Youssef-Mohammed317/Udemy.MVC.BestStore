@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BestStore.Application.DTOs.Cart;
+using BestStore.Application.DTOs.Order;
 using BestStore.Application.Interfaces.Services;
 using BestStore.Shared.Result;
 using BestStore.Web.Helpers;
@@ -62,10 +63,14 @@ namespace BestStore.Web.Controllers
                 TempData["ErrorMessage"] = "Your cart is empty";
                 return RedirectToAction("Index");
             }
+            cartView.CartItems = cartItems;
+            cartView.SubTotal = CartHelper.GetSubtotal(cartItems);
+            cartView.ShippingFee = _shippingFee;
 
+            var cartJson = JsonSerializer.Serialize(cartView);
             HttpContext.Session.SetString(
                 "CartViewModel",
-                JsonSerializer.Serialize(cartView)
+                cartJson
             );
 
             return RedirectToAction("Confirm");
@@ -74,7 +79,6 @@ namespace BestStore.Web.Controllers
         public IActionResult Confirm()
         {
             var cartViewJson = HttpContext.Session.GetString("CartViewModel");
-
             if (cartViewJson == null)
                 return RedirectToAction("Index");
 
@@ -99,27 +103,31 @@ namespace BestStore.Web.Controllers
             if (cartViewJson == null)
                 return RedirectToAction("Index");
 
-            var cartView = JsonSerializer.Deserialize<CartViewModel>(cartViewJson);
+            CartViewModel cartView = JsonSerializer.Deserialize<CartViewModel>(cartViewJson);
 
             if (cartView.CartSize == 0 || string.IsNullOrEmpty(cartView.CheckoutViewModel.DeliveryAddress) || string.IsNullOrEmpty(cartView.CheckoutViewModel.PaymentMethod))
             {
                 return RedirectToAction("Index", "Home");
             }
-
-            var result = await _orderService.CreateOrderAsync(_mapper.Map<CartDto>(cartView));
+            var cartDto = _mapper.Map<CartDto>(cartView);
+            var result = await _orderService.CreateCartOrderAsync(cartDto);
 
 
             if (result.IsFailure)
             {
                 TempData[_errorMessageKey] = result.Error.Message;
             }
+            else
+            {
 
-            // delete the shopping cart cookie
-            Response.Cookies.Delete("shopping_cart");
 
-            TempData["SuccessCartMessage"] = "Order created successfully";
+                // delete the shopping cart cookie
+                Response.Cookies.Delete("shopping_cart");
 
-            return View();
+                TempData["SuccessCartMessage"] = "Order created successfully";
+            }
+
+            return RedirectToAction("Confirm");
         }
     }
 }

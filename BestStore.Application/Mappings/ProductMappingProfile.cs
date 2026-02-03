@@ -13,7 +13,10 @@ namespace BestStore.Application.Mappings
         public ProductMappingProfile()
         {
             CreateMap<Product, ProductDto>()
-                .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.Name));
+                .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.Name))
+                .ReverseMap()
+                .ForMember(dest => dest.Category, opt => opt.Ignore())
+                ;
 
             CreateMap<CreateProductDto, Product>();
 

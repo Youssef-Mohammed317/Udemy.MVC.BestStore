@@ -30,6 +30,7 @@ namespace BestStore.Infrastructure.Identity.Services
             _currentUser = _userManager.FindByIdAsync(currentUserService.UserId!).GetAwaiter().GetResult()!;
             _isSuperAdmin = _userManager.IsInRoleAsync(_currentUser, "SuperAdmin").GetAwaiter().GetResult();
         }
+       
         public async Task<Result<PaginatedResult<UserDto>>> GetAllUsersAsync(
                 string search = null,
                 string sortBy = nameof(ApplicationUser.CreatedAt),
@@ -114,8 +115,8 @@ namespace BestStore.Infrastructure.Identity.Services
                     {
 
 
-                            continue;
-   
+                        continue;
+
                     }
 
                     userDtos.Add(new UserDto
@@ -235,7 +236,7 @@ namespace BestStore.Infrastructure.Identity.Services
         }
         public async Task<Result<List<RolePairDto>>> GetAllRolesAsync()
         {
-            var query =  _roleManager.Roles;
+            var query = _roleManager.Roles;
             if (!_isSuperAdmin)
             {
                 query = query.Where(r => !r.Name.ToLower().Contains("superadmin"));
@@ -305,5 +306,7 @@ namespace BestStore.Infrastructure.Identity.Services
 
             return roles.ToList();
         }
+
+
     }
 }

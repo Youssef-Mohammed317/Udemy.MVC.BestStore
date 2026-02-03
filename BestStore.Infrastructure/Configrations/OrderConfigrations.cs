@@ -17,14 +17,7 @@ namespace BestStore.Infrastructure.Configrations
             .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(p => p.ShippingFee).HasPrecision(16, 2);
-        }
-    }
-    internal class OrderItemConfigrations : IEntityTypeConfiguration<OrderItem>
-    {
-        public void Configure(EntityTypeBuilder<OrderItem> builder)
-        {
 
-            builder.Property(p => p.UnitPrice).HasPrecision(16, 2);
         }
     }
 }

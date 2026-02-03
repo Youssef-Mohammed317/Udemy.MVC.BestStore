@@ -1,16 +1,14 @@
-﻿using BestStore.Shared.Entities.Base;
-using System.ComponentModel.DataAnnotations.Schema;
-
-
-namespace BestStore.Shared.Entities
+﻿namespace BestStore.Application.DTOs.Order
 {
-    public class Order : BaseEntity
+    public class UpdateOrderDto
     {
+        public int Id { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime LastUpdatedAt { get; set; }
         public string ClientId { get; set; } = "";
-        public List<OrderItem> Items { get; set; } = new List<OrderItem>();
-
+        public string ClientName { get; set; }
+        public List<OrderItemDto> Items { get; set; } = new();
         public decimal ShippingFee { get; set; }
-
         public string DeliveryAddress { get; set; } = "";
         public string PaymentMethod { get; set; } = "";
         public string PaymentStatus { get; set; } = "";

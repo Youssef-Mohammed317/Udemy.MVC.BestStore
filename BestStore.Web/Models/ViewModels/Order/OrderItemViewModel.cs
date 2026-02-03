@@ -1,4 +1,5 @@
 ﻿
+using BestStore.Application.DTOs.Order;
 using BestStore.Web.Models.ViewModels.Product;
 
 namespace BestStore.Web.Models.ViewModels.Order
@@ -11,6 +12,7 @@ namespace BestStore.Web.Models.ViewModels.Order
 
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
+        public int ProductId { get; set; }
         public ProductViewModel Product { get; set; } = new();
     }
 }

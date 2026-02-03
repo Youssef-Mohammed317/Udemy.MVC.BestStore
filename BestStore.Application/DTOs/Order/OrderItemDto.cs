@@ -1,5 +1,7 @@
 ﻿
 using BestStore.Application.DTOs.Product;
+using BestStore.Shared.Entities;
+using BestStore.Shared.Entities.Base;
 
 namespace BestStore.Application.DTOs.Order
 {
@@ -11,6 +13,7 @@ namespace BestStore.Application.DTOs.Order
 
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
+        public int ProductId { get; set; }
         public ProductDto Product { get; set; } = new();
     }
 }

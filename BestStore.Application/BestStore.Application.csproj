@@ -19,8 +19,4 @@
     <ProjectReference Include="..\BestStore.Shared\BestStore.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Validators\" />
-  </ItemGroup>
-
 </Project>

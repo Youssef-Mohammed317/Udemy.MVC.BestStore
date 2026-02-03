@@ -8,7 +8,7 @@ namespace BestStore.Application.DTOs.Cart
 {
     public class CartDto
     {
-        public List<OrderItemDto> CartItems { get; set; }
+        public List<OrderItemDto> CartItems { get; set; } = new();
         public decimal ShippingFee { get; set; }
         public decimal SubTotal { get; set; }
         public decimal Total => ShippingFee + SubTotal;
@@ -24,7 +24,7 @@ namespace BestStore.Application.DTOs.Cart
                 return size;
             }
         }
-        public CheckoutDto CheckoutDto { get; set; }
+        public CheckoutDto CheckoutDto { get; set; } = new();
 
     }
     public class CheckoutDto

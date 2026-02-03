@@ -1,20 +1,21 @@
-﻿using BestStore.Shared.Entities.Base;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using BestStore.Web.Models.ViewModels.User;
 
-
-namespace BestStore.Shared.Entities
+namespace BestStore.Web.Models.ViewModels.Order
 {
-    public class Order : BaseEntity
+    public class OrderViewModel
     {
+        public int Id { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime LastUpdatedAt { get; set; }
         public string ClientId { get; set; } = "";
-        public List<OrderItem> Items { get; set; } = new List<OrderItem>();
-
+        public List<OrderItemViewModel> Items { get; set; } = new();
         public decimal ShippingFee { get; set; }
-
         public string DeliveryAddress { get; set; } = "";
         public string PaymentMethod { get; set; } = "";
         public string PaymentStatus { get; set; } = "";
         public string PaymentDetails { get; set; } = ""; // to store paypal details
         public string OrderStatus { get; set; } = "";
+        public UserViewModel Client { get; set; }
+
     }
 }

@@ -50,7 +50,7 @@ public static class CartHelper
     }
 
     public static async Task<List<OrderItemViewModel>> GetCartItemsAsync(HttpRequest request,
-        HttpResponse response, 
+        HttpResponse response,
         IProductService productService,
         IMapper mapper)
     {
@@ -67,6 +67,7 @@ public static class CartHelper
             {
                 Quantity = quantity,
                 UnitPrice = result.Value.Price,
+                ProductId = productId,
                 Product = mapper.Map<ProductViewModel>(result.Value),
             };
 
