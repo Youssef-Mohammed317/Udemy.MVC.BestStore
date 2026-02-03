@@ -12,6 +12,8 @@ namespace BestStore.Infrastructure.Repositories
     {
         private IProductRepository _productRepository;
         private ICategoryRepository _categoryRepository;
+        private IOrderRepository _orderRepository;
+        private IOrderItemRepository _orderItemRepository;
         private readonly ApplicationDbContext _context;
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -39,6 +41,30 @@ namespace BestStore.Infrastructure.Repositories
                     _categoryRepository = new CategoryRepository(_context);
                 }
                 return _categoryRepository;
+            }
+        }
+        public IOrderRepository OrderRepository
+        {
+            get
+            {
+
+                if (_orderRepository == null)
+                {
+                    _orderRepository = new OrderRepository(_context);
+                }
+                return _orderRepository;
+            }
+        }
+        public IOrderItemRepository OrderItemRepository
+        {
+            get
+            {
+
+                if (_orderItemRepository == null)
+                {
+                    _orderItemRepository = new OrderItemRepository(_context);
+                }
+                return _orderItemRepository;
             }
         }
 

@@ -113,25 +113,14 @@
                             <!-- Add to Cart Button -->
                             <div class="col-md-4">
                                 <button class="btn btn-success w-100"
-                                        onclick="addToCart(@Model.Id, '@Model.Name', @Model.Price)">
+                                        onclick="addToCart(this, @Model.Id)">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart4 me-2" viewBox="0 0 16 16">
                                         <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5M3.14 5l.5 2H5V5zM6 5v2h2V5zm3 0v2h2V5zm3 0v2h1.36l.5-2zm1.11 3H12v2h.61zM11 8H9v2h2zM8 8H6v2h2zM5 8H3.89l.5 2H5zm0 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0m9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0" />
                                     </svg>
                                     Add to Cart
                                 </button>
                             </div>
-
-                            <!-- Buy Now Button -->
-                            <div class="col-md-4">
-                                <button class="btn btn-primary w-100"
-                                        onclick="buyNow(@Model.Id, '@Model.Name', @Model.Price)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bag-check me-2" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M10.854 8.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708 0" />
-                                        <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" />
-                                    </svg>
-                                    Buy Now
-                                </button>
-                            </div>
+                           
                         </div>
                     </div>
 
@@ -231,143 +220,3 @@
     }
 </div>
 
-@section Scripts {
-    <script>
-        // Quantity control functions
-        function decreaseQuantity() {
-            const quantityInput = document.getElementById('quantityInput');
-            let quantity = parseInt(quantityInput.value);
-            if (quantity > 1) {
-                quantityInput.value = quantity - 1;
-            }
-        }
-
-        function increaseQuantity() {
-            const quantityInput = document.getElementById('quantityInput');
-            let quantity = parseInt(quantityInput.value);
-            if (quantity < 99) {
-                quantityInput.value = quantity + 1;
-            }
-        }
-
-        function validateQuantity() {
-            const quantityInput = document.getElementById('quantityInput');
-            let quantity = parseInt(quantityInput.value);
-
-            if (isNaN(quantity) || quantity < 1) {
-                quantityInput.value = 1;
-            } else if (quantity > 99) {
-                quantityInput.value = 99;
-            }
-        }
-
-        // Get current quantity
-        function getCurrentQuantity() {
-            return parseInt(document.getElementById('quantityInput').value) || 1;
-        }
-
-        // Add to cart functionality
-        function addToCart(productId, productName, productPrice) {
-            const quantity = getCurrentQuantity();
-
-            // Show loading state
-            const button = event.target;
-            const originalHTML = button.innerHTML;
-            button.innerHTML = `
-                <div class="spinner-border spinner-border-sm me-2" role="status">
-                    <span class="visually-hidden">Adding...</span>
-                </div>
-                Adding...
-            `;
-            button.disabled = true;
-
-            // Simulate API call
-            setTimeout(() => {
-                showToast(`${quantity} x ${productName} added to cart`, 'success');
-
-                // Update cart count
-                updateCartCount(quantity);
-
-                // Reset button
-                setTimeout(() => {
-                    button.innerHTML = originalHTML;
-                    button.disabled = false;
-                }, 1500);
-            }, 800);
-        }
-
-        // Buy now functionality
-        function buyNow(productId, productName, productPrice) {
-            const quantity = getCurrentQuantity();
-
-            // Show loading state
-            const button = event.target;
-            const originalHTML = button.innerHTML;
-            button.innerHTML = `
-                <div class="spinner-border spinner-border-sm me-2" role="status">
-                    <span class="visually-hidden">Processing...</span>
-                </div>
-                Processing...
-            `;
-            button.disabled = true;
-
-            // Simulate API call
-            setTimeout(() => {
-                showToast(`Added ${quantity} item${quantity > 1 ? 's' : ''} to cart`, 'success');
-
-                // Update cart count
-                updateCartCount(quantity);
-
-                // Reset button
-                button.innerHTML = originalHTML;
-                button.disabled = false;
-
-                // Redirect to cart page (optional)
-                // window.location.href = '/Cart';
-            }, 800);
-        }
-
-        // Show toast message
-        function showToast(message, type) {
-            const toast = document.createElement('div');
-            toast.className = `toast align-items-center text-bg-${type} border-0`;
-            toast.setAttribute('role', 'alert');
-            toast.setAttribute('aria-live', 'assertive');
-            toast.setAttribute('aria-atomic', 'true');
-
-            toast.innerHTML = `
-                <div class="d-flex">
-                    <div class="toast-body">
-                        ${message}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-            `;
-
-            let container = document.querySelector('.toast-container');
-            if (!container) {
-                container = document.createElement('div');
-                container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-                document.body.appendChild(container);
-            }
-
-            container.appendChild(toast);
-            const bsToast = new bootstrap.Toast(toast);
-            bsToast.show();
-
-            toast.addEventListener('hidden.bs.toast', function () {
-                toast.remove();
-            });
-        }
-
-        // Update cart count in header
-        function updateCartCount(quantity = 1) {
-            const cartCountElement = document.querySelector('.cart-count');
-            if (cartCountElement) {
-                let currentCount = parseInt(cartCountElement.textContent) || 0;
-                cartCountElement.textContent = currentCount + quantity;
-                cartCountElement.classList.remove('d-none');
-            }
-        }
-    </script>
-}

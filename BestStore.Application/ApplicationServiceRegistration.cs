@@ -14,6 +14,8 @@ namespace BestStore.Application
         {
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IOrderItemService, OrderItemService>();
             services.AddHttpClient<IEmailSender, BrevoEmailSender>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }

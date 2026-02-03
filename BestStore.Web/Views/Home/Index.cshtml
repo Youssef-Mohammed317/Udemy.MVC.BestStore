@@ -39,7 +39,7 @@
                             Brand: @product.Brand, Category: @product.Category
                         </p>
                         <h4 class="mb-3">@(product.Price)$</h4>
-                        <a class="btn btn-primary btn-sm mb-2" asp-controller="Store"
+                        <a class="btn btn-primary btn-sm mb-2" asp-controller="Product"
                            asp-action="Details" asp-route-id="@product.Id">Details</a>
                         <button type="button" class="btn btn-warning btn-sm mb-2" onclick="addToCart(this, @product.Id)">
                             Add to Cart <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart4" viewBox="0 0 16 16">
@@ -52,3 +52,4 @@
         </div>
     </div>
 </div>
+

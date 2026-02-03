@@ -18,7 +18,12 @@ namespace BestStore.Web
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -39,9 +44,9 @@ namespace BestStore.Web
 
             app.UseHttpsRedirection();
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseSession();
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",

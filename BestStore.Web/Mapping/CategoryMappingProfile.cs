@@ -18,7 +18,7 @@ namespace BestStore.Web.Mapping
 
             CreateMap<CategoryDto, CategoryViewModel>().ReverseMap();
             CreateMap<CategoryDto, UpdateCategoryViewModel>().ReverseMap();
-            
+
             CreateMap<CreateCategoryDto, CreateCategoryViewModel>().ReverseMap();
             CreateMap<UpdateCategoryDto, UpdateCategoryViewModel>().ReverseMap();
 

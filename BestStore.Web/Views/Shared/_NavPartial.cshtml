@@ -51,11 +51,29 @@
 					else if (User.IsInRole("Customer"))
 					{
 						<!-- Customer-only links -->
-						<li class="nav-item">
-							<a class="nav-link text-dark px-3 py-2 rounded-1" asp-area="" asp-controller="Cart" asp-action="Index">
-								<i class="bi bi-cart me-1"></i> Cart
+						<li class="nav-item position-relative">
+							<a class="nav-link text-dark px-3 py-2 rounded-1"
+							   asp-area=""
+							   asp-controller="Cart"
+							   asp-action="Index">
+
+								<span class="position-relative py-2">
+
+									<i class="bi bi-cart"></i>
+
+
+									<!-- Badge -->
+									<span id="CartSize"
+										  class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-danger">
+										@(CartHelper.GetCartSize(Context.Request,Context.Response))
+									</span>
+								</span>
+								Cart
+
 							</a>
+
 						</li>
+
 						<li class="nav-item">
 							<a class="nav-link text-dark px-3 py-2 rounded-1" asp-area="" asp-controller="Order" asp-action="MyOrders">
 								<i class="bi bi-bag-check me-1"></i> My Orders
@@ -229,3 +247,5 @@
 		}
 	}
 </style>
+
+		
