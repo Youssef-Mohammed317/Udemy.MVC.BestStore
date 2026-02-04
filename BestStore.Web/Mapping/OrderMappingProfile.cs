@@ -12,6 +12,7 @@ namespace BestStore.Web.Mapping
 
             CreateMap<OrderItemViewModel, OrderItemDto>().ReverseMap();
             CreateMap<OrderDto, OrderViewModel>().ReverseMap();
+            CreateMap<OrderDetailsDto, OrderDetailsViewModel>().ReverseMap();
             CreateMap<UpdateOrderViewModel, UpdateOrderDto>().ReverseMap();
             CreateMap<PaginatedResult<OrderDto>, PaginatedResult<OrderViewModel>>().ReverseMap();
         }

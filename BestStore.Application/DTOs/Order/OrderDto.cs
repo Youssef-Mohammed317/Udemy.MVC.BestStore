@@ -17,4 +17,5 @@ namespace BestStore.Application.DTOs.Order
         public string PaymentDetails { get; set; } = ""; // to store paypal details
         public string OrderStatus { get; set; } = "";
     }
+
 }

@@ -27,9 +27,4 @@ namespace BestStore.Application.DTOs.Cart
         public CheckoutDto CheckoutDto { get; set; } = new();
 
     }
-    public class CheckoutDto
-    {
-        public string DeliveryAddress { get; set; } = "";
-        public string PaymentMethod { get; set; } = "";
-    }
 }

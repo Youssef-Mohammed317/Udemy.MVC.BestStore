@@ -73,7 +73,12 @@ namespace BestStore.Web.Controllers
                 cartJson
             );
 
-            return RedirectToAction("Confirm");
+            if (cartView.CheckoutViewModel.PaymentMethod.Contains("paypal") || cartView.CheckoutViewModel.PaymentMethod.Contains("credit_card"))
+            {
+                return   RedirectToAction("Index", "Checkout");
+            }
+
+                return RedirectToAction("Confirm");
         }
         [Authorize]
         public IActionResult Confirm()

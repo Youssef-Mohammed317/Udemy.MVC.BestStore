@@ -8,6 +8,7 @@ namespace BestStore.Web.Models.ViewModels.Order
         public DateTime CreatedAt { get; set; }
         public DateTime LastUpdatedAt { get; set; }
         public string ClientId { get; set; } = "";
+
         public List<OrderItemViewModel> Items { get; set; } = new();
         public decimal ShippingFee { get; set; }
         public string DeliveryAddress { get; set; } = "";

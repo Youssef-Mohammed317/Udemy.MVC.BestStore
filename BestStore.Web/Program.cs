@@ -1,6 +1,7 @@
 using BestStore.Application;
 using BestStore.Application.Interfaces.Services;
 using BestStore.Infrastructure;
+using BestStore.Shared;
 namespace BestStore.Web
 {
     public static class Program
@@ -24,6 +25,11 @@ namespace BestStore.Web
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
+
+            builder.Services.Configure<PayPalSettings>(
+                builder.Configuration.GetSection("PayPalSettings")
+            );
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

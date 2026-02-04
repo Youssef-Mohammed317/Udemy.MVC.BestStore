@@ -11,13 +11,16 @@ namespace BestStore.Web.Mapping
         {
 
 
-            CreateMap<CartViewModel, CartDto>();
-            CreateMap<CartDto, CartViewModel>();
+            CreateMap<CartViewModel, CartDto>()
+                .ForMember(dest => dest.CheckoutDto, opt => opt.MapFrom(src => src.CheckoutViewModel));
+            CreateMap<CartDto, CartViewModel>()
+                .ForMember(dest => dest.CheckoutViewModel, opt => opt.MapFrom(src => src.CheckoutDto));
+                
 
 
             // Checkout
-            CreateMap<CheckoutDto, CheckoutViewModel>()
-                .ReverseMap();
+            CreateMap<CheckoutDto, CheckoutViewModel>().ReverseMap();
+            CreateMap<CheckoutViewModel, CheckoutDto>().ReverseMap();
 
         }
     }

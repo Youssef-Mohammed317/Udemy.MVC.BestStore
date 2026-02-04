@@ -1,4 +1,4 @@
-﻿@model OrderViewModel
+﻿@model OrderDetailsViewModel
 @{
     string paymentBadgeColor = "bg-danger";
     if (Model.PaymentStatus == "pending")
@@ -119,7 +119,7 @@
             <div class="row mb-2 pb-2 border-bottom">
                 <div class="col">N° Orders</div>
                 <div class="col">
-                    @ViewBag.NumOrders
+                    @Model.ClientOrdersCount
                 </div>
             </div>
 

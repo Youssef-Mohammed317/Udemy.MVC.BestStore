@@ -9,6 +9,7 @@ namespace BestStore.Application.Mappings
         public OrderMappingProfile()
         {
             CreateMap<Order, OrderDto>().ReverseMap();
+            CreateMap<Order, OrderDetailsDto>().ReverseMap();
             CreateMap<OrderItem, OrderItemDto>()
                 .ReverseMap()
                 .ForMember(dest => dest.Product, opt => opt.Ignore())

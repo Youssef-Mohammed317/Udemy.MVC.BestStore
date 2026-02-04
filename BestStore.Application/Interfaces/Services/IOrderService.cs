@@ -6,11 +6,10 @@ namespace BestStore.Application.Interfaces.Services
 {
     public interface IOrderService
     {
-        Task<Result> CreateCartOrderAsync(CartDto cartDto);
-        Task<Result<List<OrderDto>>> GetAllOrdersAsync();
-        Task<Result<OrderDto>> GetOrderByIdAsync(int id);
-        Task<Result<OrderDto>> GetOrderDetailsByIdAsync(int id);
-        Task<Result<PaginatedResult<OrderDto>>> GetOrdersPaginatedAsync(string search = null, string sortBy = "CreatedAt", bool ascending = false, int pageNumber = 1, int pageSize = 10);
+        Task<Result> CreateCartOrderAsync(CartDto cartDto, bool isPaypalAccepted = false);
+        Task<Result<OrderDetailsDto>> GetOrderByIdAsync(int id);
+        Task<Result<OrderDetailsDto>> GetOrderDetailsByIdAsync(int id);
+        Task<Result<PaginatedResult<OrderDto>>> GetOrdersPaginatedAsync(string? search = null, string sortBy = "CreatedAt", bool ascending = false, int pageNumber = 1, int pageSize = 10, string? userId = null, bool isAdmin = false);
         Task<Result<OrderDto>> UpdateOrderPaymentStatusAsync(UpdateOrderDto orderDto);
     }
 }
