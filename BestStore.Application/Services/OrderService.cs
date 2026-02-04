@@ -8,6 +8,7 @@ using BestStore.Application.Interfaces.Utility;
 using BestStore.Shared.Entities;
 using BestStore.Shared.Result;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -89,31 +90,32 @@ namespace BestStore.Application.Services
         }
         public async Task<Result<OrderDto>> GetOrderByIdAsync(int id)
         {
-            var orderResult = await _unitOfWork.OrderRepository.GetByIdAsync(id);
-
-            if (orderResult.IsFailure)
-                return Result<OrderDto>.Failure(orderResult.Error);
-
-
-            var orderDto = _mapper.Map<OrderDto>(orderResult.Value);
-            var userResult = await _userService.GetUserByIdAsync(orderResult.Value.ClientId);
-            if (userResult.IsFailure)
-                return Result<OrderDto>.Failure(userResult.Error);
-            orderDto.Client = userResult.Value;
-
-            return Result<OrderDto>.Success(orderDto);
+            return await GetOrderInternalAsync(id);
+        }
+        public async Task<Result<OrderDto>> GetOrderDetailsByIdAsync(int id)
+        {
+            return await GetOrderInternalAsync(
+                id,
+                q => q
+                    .Include(o => o.Items)
+                        .ThenInclude(i => i.Product)
+                            .ThenInclude(p => p.Category)
+            );
         }
 
 
-        public async Task<Result<OrderDto>> UpdateOrderAsync(UpdateOrderDto orderDto)
+        public async Task<Result<OrderDto>> UpdateOrderPaymentStatusAsync(UpdateOrderDto orderDto)
         {
             var orderResult = await _unitOfWork.OrderRepository.GetByIdAsync(orderDto.Id);
             if (orderResult.IsFailure)
             {
                 return Result<OrderDto>.Failure(orderResult.Error);
             }
+
             var order = orderResult.Value;
-            _mapper.Map(orderDto, order);
+            order.OrderStatus = orderDto.OrderStatus;
+
+            order.PaymentStatus = orderDto.PaymentStatus;
 
             var saveResult = await _unitOfWork.SaveChangesAsync();
             if (saveResult.IsFailure)
@@ -124,117 +126,108 @@ namespace BestStore.Application.Services
             return Result<OrderDto>.Success(_mapper.Map<OrderDto>(order));
         }
 
-        //public async Task<Result<OrderDto>> GetProductByIdAsync(int id)
-        //{
-        //    var productResult = await _unitOfWork.ProductRepository.GetByIdAsync(id, include: x => x.Include(x => x.Category));
+        public async Task<Result<PaginatedResult<OrderDto>>> GetOrdersPaginatedAsync(
+            string search = null,
+            string sortBy = nameof(Order.CreatedAt),
+            bool ascending = false,
+            int pageNumber = 1,
+            int pageSize = 10)
+        {
+            try
+            {
+                Expression<Func<Order, bool>> filter = p =>
+                    (string.IsNullOrEmpty(search) || p.DeliveryAddress.Contains(search)
+                    || p.PaymentMethod.Contains(search) || p.PaymentDetails.Contains(search)
+                    || p.OrderStatus.Contains(search) || p.PaymentStatus.Contains(search));
+                Func<IQueryable<Order>, IOrderedQueryable<Order>> orderBy = null;
 
-        //    if (productResult.IsFailure)
-        //    {
-        //        return Result<OrderDto>.Failure(productResult.Error);
-        //    }
+                if (!string.IsNullOrEmpty(sortBy))
+                {
+                    orderBy = sortBy.ToLower() switch
+                    {
+                        "id" => ascending
+                            ? q => q.OrderBy(p => p.Id)
+                            : q => q.OrderByDescending(p => p.Id),
+                        "deliveryaddress" => ascending
+                            ? q => q.OrderBy(p => p.DeliveryAddress)
+                            : q => q.OrderByDescending(p => p.DeliveryAddress),
 
-        //    var productDto = _mapper.Map<OrderDto>(productResult.Value);
-        //    return Result<OrderDto>.Success(productDto);
-        //}
+                        "paymentmethod" => ascending
+                            ? q => q.OrderBy(p => p.PaymentMethod)
+                            : q => q.OrderByDescending(p => p.PaymentMethod),
+                        "paymentstatus" => ascending
+                            ? q => q.OrderBy(p => p.PaymentStatus)
+                            : q => q.OrderByDescending(p => p.PaymentStatus),
 
-        //public async Task<Result> DeleteProductAsync(int id)
-        //{
-        //    var productResult = await _unitOfWork.ProductRepository.GetByIdAsync(id, include: x => x.Include(x => x.Category));
-        //    if (productResult.IsFailure)
-        //    {
-        //        return Result.Failure(productResult.Error);
-        //    }
-        //    var product = productResult.Value;
+                        "paymentdetails" => ascending
+                            ? q => q.OrderBy(p => p.PaymentDetails)
+                            : q => q.OrderByDescending(p => p.PaymentDetails),
 
-        //    var result = await _unitOfWork.ProductRepository.DeleteAsync(product);
+                        "orderstatus" => ascending
+                            ? q => q.OrderBy(p => p.OrderStatus)
+                            : q => q.OrderByDescending(p => p.OrderStatus),
 
-        //    if (result.IsFailure)
-        //    {
-        //        return Result.Failure(result.Error);
-        //    }
+                        "createdat" => ascending
+                            ? q => q.OrderBy(p => p.CreatedAt)
+                            : q => q.OrderByDescending(p => p.CreatedAt),
 
-        //    var saveResult = await _unitOfWork.SaveChangesAsync();
-        //    if (saveResult.IsFailure)
-        //    {
-        //        return Result.Failure(saveResult.Error);
-        //    }
-        //    return Result.Success();
-        //}
+                        _ => q => q.OrderByDescending(p => p.CreatedAt)
+                    };
+                }
 
-        //public async Task<Result<PaginatedResult<OrderDto>>> GetOrdersPaginatedAsync(
-        //    string search = null,
-        //    int? category = null,
-        //    string sortBy = nameof(Product.Name),
-        //    bool ascending = true,
-        //    int pageNumber = 1,
-        //    int pageSize = 10)
-        //{
-        //    try
-        //    {
-        //        Expression<Func<Product, bool>> filter = p =>
-        //            (string.IsNullOrEmpty(search) || p.Name.Contains(search) || p.Brand.Contains(search)) &&
-        //            (category == null || p.CategoryId == category);
+                var repoResult = await _unitOfWork.OrderRepository.GetPaginatedAsync(
+                    filter: filter,
+                    orderBy: orderBy,
+                    include: null,
+                    pageNumber: pageNumber,
+                    pageSize: pageSize,
+                    disableTracking: true
+                    );
 
-        //        Func<IQueryable<Product>, IOrderedQueryable<Product>> orderBy = null;
+                if (repoResult.IsFailure)
+                    return Result<PaginatedResult<OrderDto>>.Failure(repoResult.Error);
 
-        //        if (!string.IsNullOrEmpty(sortBy))
-        //        {
-        //            orderBy = sortBy.ToLower() switch
-        //            {
-        //                "id" => ascending
-        //                    ? q => q.OrderBy(p => p.Id)
-        //                    : q => q.OrderByDescending(p => p.Id),
-        //                "name" => ascending
-        //                    ? q => q.OrderBy(p => p.Name)
-        //                    : q => q.OrderByDescending(p => p.Name),
+                var productDtos = _mapper.Map<List<OrderDto>>(repoResult.Value.Items);
 
-        //                "brand" => ascending
-        //                    ? q => q.OrderBy(p => p.Brand)
-        //                    : q => q.OrderByDescending(p => p.Brand),
+                var paginatedDtoResult = new PaginatedResult<OrderDto>(
+                    productDtos,
+                    repoResult.Value.TotalCount,
+                    repoResult.Value.PageNumber,
+                    repoResult.Value.PageSize);
 
-        //                "price" => ascending
-        //                    ? q => q.OrderBy(p => p.Price)
-        //                    : q => q.OrderByDescending(p => p.Price),
+                return Result<PaginatedResult<OrderDto>>.Success(paginatedDtoResult);
+            }
+            catch (Exception ex)
+            {
+                return Result<PaginatedResult<OrderDto>>.Failure(Error.Failure("Service.Error", ex.Message));
+            }
+        }
+        private async Task<Result<OrderDto>> GetOrderInternalAsync(
+           int id,
+           Func<IQueryable<Order>, IIncludableQueryable<Order, object>>? include = null)
+        {
 
-        //                "category" => ascending
-        //                    ? q => q.OrderBy(p => p.Category)
-        //                    : q => q.OrderByDescending(p => p.Category),
+            var orderResult = await _unitOfWork.OrderRepository.GetByIdAsync(id, include: include);
 
-        //                "createdat" => ascending
-        //                    ? q => q.OrderBy(p => p.CreatedAt)
-        //                    : q => q.OrderByDescending(p => p.CreatedAt),
 
-        //                _ => q => q.OrderBy(p => p.Id)
-        //            };
-        //        }
 
-        //        var repoResult = await _unitOfWork.ProductRepository.GetPaginatedAsync(
-        //            filter: filter,
-        //            orderBy: orderBy,
-        //            include: x => x.Include(x => x.Category),
-        //            pageNumber: pageNumber,
-        //            pageSize: pageSize,
-        //            disableTracking: true
-        //            );
+            if (orderResult.IsFailure || orderResult.Value == null)
+                return Result<OrderDto>.Failure(orderResult.Error);
 
-        //        if (repoResult.IsFailure)
-        //            return Result<PaginatedResult<OrderDto>>.Failure(repoResult.Error);
+            var order = orderResult.Value;
 
-        //        var productDtos = _mapper.Map<List<OrderDto>>(repoResult.Value.Items);
+            var orderDto = _mapper.Map<OrderDto>(order);
 
-        //        var paginatedDtoResult = new PaginatedResult<OrderDto>(
-        //            productDtos,
-        //            repoResult.Value.TotalCount,
-        //            repoResult.Value.PageNumber,
-        //            repoResult.Value.PageSize);
+            var userResult = await _userService.GetUserByIdAsync(order.ClientId);
+            if (userResult.IsFailure)
+                return Result<OrderDto>.Failure(userResult.Error);
 
-        //        return Result<PaginatedResult<OrderDto>>.Success(paginatedDtoResult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Result<PaginatedResult<OrderDto>>.Failure(Error.Failure("Service.Error", ex.Message));
-        //    }
-        //}
+            orderDto.Client = userResult.Value;
+
+            return Result<OrderDto>.Success(orderDto);
+        }
+
+
 
     }
 }

@@ -1,93 +1,528 @@
-﻿@model List<OrderViewModel>
+﻿@using BestStore.Application.DTOs.Order
+@model OrderListViewModel
 
+@{
+    ViewData["Title"] = "Orders";
 
-<h3 class="text-center mb-4">List of Orders</h3>
+    // Helper function for sorting arrows
+    HtmlString GetSortArrow(string column)
+    {
+        if (Model.SortBy != column) 
+            return new HtmlString("<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='currentColor' class='bi bi-arrow-up text-primary' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5'/></svg>");
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Client</th>
-            <th>Units</th>
-            <th>Total</th>
-            <th>Payment Method</th>
-            <th>Payment Status</th>
-            <th>Order Status</th>
-            <th>Date</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach (var order in Model)
+        return Model.Ascending
+            ? new HtmlString("<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='currentColor' class='bi bi-arrow-down text-primary' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1'/></svg>")
+            : new HtmlString("<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='currentColor' class='bi bi-arrow-up text-primary' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5'/></svg>");
+    }
+    
+    // Helper function to generate sort URL
+    string GetSortUrl(string column)
+    {
+        var newAscending = Model.SortBy == column ? !Model.Ascending : true;
+        
+        var queryParams = new OrderQueryParams
         {
-            int count = 0;
-            decimal total = order.ShippingFee;
-            foreach (var item in order.Items)
-            {
-                count += item.Quantity;
-                total += item.Quantity * item.UnitPrice;
-            }
+            Search = Model.Search,
+            SortBy = column,
+            Ascending = newAscending,
+            PageNumber = 1,
+            PageSize = Model.PaginatedOrders?.PageSize ?? 10
+        };
+        
+        return Url.Action("Index", queryParams)!;
+    }
+    
+    // Helper function for pagination URLs
+    string GetPageUrl(int pageNumber)
+    {
+        return Url.Action("Index", new OrderQueryParams
+        {
+            Search = Model.Search,
+            SortBy = Model.SortBy,
+            Ascending = Model.Ascending,
+            PageNumber = pageNumber,
+            PageSize = Model.PaginatedOrders?.PageSize ?? 10
+        })!;
+    }
+}
 
-            string paymentBadgeColor = "bg-danger";
-            if (order.PaymentStatus == "pending")
-            {
-                paymentBadgeColor = "bg-warning text-dark";
-            }
-            else if (order.PaymentStatus == "accepted")
-            {
-                paymentBadgeColor = "bg-success";
-            }
-            else if (order.PaymentStatus == "canceled")
-            {
-                paymentBadgeColor = "bg-secondary";
-            }
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0" id="pageTitle">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart-check" viewBox="0 0 16 16">
+          <path d="M11.354 6.354a.5.5 0 0 0-.708-.708L8 8.293 6.854 7.146a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"/>
+          <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+        </svg> Orders
+    </h2>
+    <a class="btn btn-success" asp-controller="Order" asp-action="Create" id="addOrderBtn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle me-2" viewBox="0 0 16 16">
+          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+        </svg>Create New Order
+    </a>
+</div>
 
+<!-- Search and Filter Card -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" asp-controller="Order" asp-action="Index" class="row g-3 align-items-end" id="searchFilterForm">
+            <input type="hidden" name="pageNumber" value="1" id="pageNumberInput" />
+            <input type="hidden" name="sortBy" value="@Model.SortBy" id="sortByInput" />
+            <input type="hidden" name="ascending" value="@Model.Ascending.ToString()" id="ascendingInput" />
+            
+            <div class="col-md-6">
+                <label class="form-label" for="searchInput" id="searchLabel">Search Orders</label>
+                <div class="input-group">
+                    <span class="input-group-text" id="searchIcon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                        </svg>
+                    </span>
+                    <input class="form-control" 
+                           type="search" 
+                           name="search" 
+                           value="@Model.Search" 
+                           placeholder="Search by address, payment method, status..."
+                           id="searchInput"
+                           aria-describedby="searchIcon">
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="dropdown w-100">
+                    <button class="btn btn-outline-secondary dropdown-toggle w-100"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            data-bs-auto-close="true"
+                            aria-expanded="false">
+                        Sort By @(Model.SortBy == "CreatedAt" ? "Date Created" : Model.SortBy)
+                    </button>
 
-            string orderBadgeColor = "bg-danger";
-            if (order.OrderStatus == "created")
-            {
-                orderBadgeColor = "bg-warning text-dark";
-            }
-            else if (order.OrderStatus == "accepted")
-            {
-                orderBadgeColor = "bg-success";
-            }
-            else if (order.OrderStatus == "canceled")
-            {
-                orderBadgeColor = "bg-secondary";
-            }
-            else if (order.OrderStatus == "shipped")
-            {
-                orderBadgeColor = "bg-primary";
-            }
-            else if (order.OrderStatus == "delivered")
-            {
-                orderBadgeColor = "bg-success";
-            }
-            else if (order.OrderStatus == "returned")
-            {
-                orderBadgeColor = "bg-info text-dark";
-            }
-            else if (order.OrderStatus == "deleted")
-            {
-                orderBadgeColor = "bg-dark";
-            }
+                    <ul class="dropdown-menu animate__animated animate__fadeIn animate__faster"
+                        style="animation-duration: 0.2s;">
+                        <li><a class="dropdown-item transition-all" 
+                               href="@GetSortUrl("Id")"
+                               style="transition: all 0.15s ease-in-out;">ID</a></li>
+                        <li><a class="dropdown-item transition-all" 
+                               href="@GetSortUrl("DeliveryAddress")"
+                               style="transition: all 0.15s ease-in-out;">Delivery Address</a></li>
+                        <li><a class="dropdown-item transition-all" 
+                               href="@GetSortUrl("PaymentMethod")"
+                               style="transition: all 0.15s ease-in-out;">Payment Method</a></li>
+                        <li><a class="dropdown-item transition-all" 
+                               href="@GetSortUrl("PaymentStatus")"
+                               style="transition: all 0.15s ease-in-out;">Payment Status</a></li>
+                        <li><a class="dropdown-item transition-all" 
+                               href="@GetSortUrl("OrderStatus")"
+                               style="transition: all 0.15s ease-in-out;">Order Status</a></li>
+                        <li><a class="dropdown-item transition-all" 
+                               href="@GetSortUrl("CreatedAt")"
+                               style="transition: all 0.15s ease-in-out;">Date Created</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-md-2">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" type="submit" id="applyFilterBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel me-1" viewBox="0 0 16 16">
+                          <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/>
+                        </svg>Apply
+                    </button>
+                    @if (!string.IsNullOrEmpty(Model.Search))
+                    {
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary" id="clearFilterBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle me-1" viewBox="0 0 16 16">
+                              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                              <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                            </svg>Clear
+                        </a>
+                    }
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
-            <tr>
-                <td>@order.Id</td>
-                <td>@(order.Client.FullName)</td>
-                <td>@count</td>
-                <td>@(total)$</td>
-                <td>@order.PaymentMethod</td>
-                <td><span class="badge rounded-pill @paymentBadgeColor">@order.PaymentStatus</span></td>
-                <td><span class="badge rounded-pill @orderBadgeColor">@order.OrderStatus</span></td>
-                <td>@order.CreatedAt.ToString("MM/dd/yyyy")</td>
-                <td>
-                    <a class="btn btn-primary btn-sm" asp-controller="Order" asp-action="Details"
-                       asp-route-id="@order.Id">Details</a>
-                </td>
-            </tr>
+@if (Model.PaginatedOrders?.Items?.Any() != true)
+{
+    <div class="card" id="noOrdersCard">
+        <div class="card-body text-center py-5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart-x display-1 text-muted mb-3" viewBox="0 0 16 16" id="noOrdersIcon">
+              <path d="M7.354 5.646a.5.5 0 1 0-.708.708L7.793 7.5 6.646 8.646a.5.5 0 1 0 .708.708L8.5 8.207l1.146 1.147a.5.5 0 0 0 .708-.708L9.207 7.5l1.147-1.146a.5.5 0 0 0-.708-.708L8.5 6.793 7.354 5.646z"/>
+              <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+            </svg>
+            <h4 class="text-muted" id="noOrdersText">No orders found</h4>
+            @if (!string.IsNullOrEmpty(Model.Search))
+            {
+                <p class="text-muted" id="searchResultText">No results for "<strong>@Model.Search</strong>"</p>
+            }
+            <a asp-action="Create" asp-controller="Order" class="btn btn-primary mt-3" id="createFirstOrderBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle me-2" viewBox="0 0 16 16">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                </svg>Create Your First Order
+            </a>
+        </div>
+    </div>
+}
+else
+{
+    <!-- Orders Table -->
+    <div class="card shadow-sm" id="ordersTableCard">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="ordersTable" aria-describedby="ordersTableDescription">
+                    <caption id="ordersTableDescription" class="visually-hidden">List of orders with ID, Delivery Address, Payment Method, Payment Status, Order Status, and Creation Date</caption>
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 60px;">
+                                <a href="@GetSortUrl("Id")" class="text-decoration-none text-dark d-flex align-items-center" id="sortIdHeader">
+                                    <span>ID</span>
+                                    @GetSortArrow("Id")
+                                </a>
+                            </th>
+
+                            <th>
+                                <a href="@GetSortUrl("DeliveryAddress")" class="text-decoration-none text-dark d-flex align-items-center" id="sortDeliveryAddressHeader">
+                                    <span>Delivery Address</span>
+                                    @GetSortArrow("DeliveryAddress")
+                                </a>
+                            </th>
+
+                            <th>
+                                <a href="@GetSortUrl("PaymentMethod")" class="text-decoration-none text-dark d-flex align-items-center" id="sortPaymentMethodHeader">
+                                    <span>Payment Method</span>
+                                    @GetSortArrow("PaymentMethod")
+                                </a>
+                            </th>
+
+                            <th>
+                                <a href="@GetSortUrl("PaymentStatus")" class="text-decoration-none text-dark d-flex align-items-center" id="sortPaymentStatusHeader">
+                                    <span>Payment Status</span>
+                                    @GetSortArrow("PaymentStatus")
+                                </a>
+                            </th>
+
+                            <th>
+                                <a href="@GetSortUrl("OrderStatus")" class="text-decoration-none text-dark d-flex align-items-center" id="sortOrderStatusHeader">
+                                    <span>Order Status</span>
+                                    @GetSortArrow("OrderStatus")
+                                </a>
+                            </th>
+
+                            <th>
+                                <a href="@GetSortUrl("CreatedAt")" class="text-decoration-none text-dark d-flex align-items-center" id="sortCreatedAtHeader">
+                                    <span>Created At</span>
+                                    @GetSortArrow("CreatedAt")
+                                </a>
+                            </th>
+                            <th style="width: 120px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.PaginatedOrders.Items)
+                        {
+                            <tr id="orderRow-@order.Id">
+                                <td class="fw-semibold" id="orderId-@order.Id">#@order.Id</td>
+                                <td id="orderDeliveryAddress-@order.Id">
+                                    <div class="text-truncate" style="max-width: 200px;" title="@order.DeliveryAddress">
+                                        @order.DeliveryAddress
+                                    </div>
+                                </td>
+                                <td id="orderPaymentMethod-@order.Id">
+                                    <span class="badge bg-info text-dark">@order.PaymentMethod</span>
+                                </td>
+                                <td id="orderPaymentStatus-@order.Id">
+                                    @{
+                                        var paymentStatusBadgeClass = order.PaymentStatus.ToLower() switch
+                                        {
+                                            "paid" => "bg-success",
+                                            "pending" => "bg-warning text-dark",
+                                            "failed" => "bg-danger",
+                                            _ => "bg-secondary"
+                                        };
+                                    }
+                                    <span class="badge @paymentStatusBadgeClass">@order.PaymentStatus</span>
+                                </td>
+                                <td id="orderOrderStatus-@order.Id">
+                                    @{
+                                        var orderStatusBadgeClass = order.OrderStatus.ToLower() switch
+                                        {
+                                            "delivered" => "bg-success",
+                                            "shipped" => "bg-primary",
+                                            "processing" => "bg-info text-dark",
+                                            "pending" => "bg-warning text-dark",
+                                            "cancelled" => "bg-danger",
+                                            _ => "bg-secondary"
+                                        };
+                                    }
+                                    <span class="badge @orderStatusBadgeClass">@order.OrderStatus</span>
+                                </td>
+                                <td class="text-muted" id="orderCreatedAt-@order.Id">@order.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td class="align-content-center" id="orderActions-@order.Id">
+                                    <div class="btn-group" aria-label="Order Actions">
+                                        <a class="btn btn-outline-primary btn-sm rounded-1" 
+                                           asp-controller="Order" 
+                                           asp-action="Details" 
+                                           asp-route-id="@order.Id"
+                                           title="View Details"
+                                           id="viewOrderBtn-@order.Id">
+                                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+                                            <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                                          </svg>
+                                        </a>
+                                        <a class="btn btn-outline-secondary btn-sm rounded-1 ms-1" 
+                                           asp-controller="Order" 
+                                           asp-action="Edit" 
+                                           asp-route-id="@order.Id"
+                                           title="Edit"
+                                           id="editOrderBtn-@order.Id">
+                                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                                          </svg>
+                                        </a>
+                                        <form asp-controller="Order"
+                                              asp-action="Delete"
+                                              asp-route-id="@order.Id"
+                                              method="post"
+                                              class="d-inline ms-1 rounded-1"
+                                              onsubmit="return confirm('Are you sure you want to delete this order?')"
+                                              id="deleteOrderForm-@order.Id">
+
+                                            <button type="submit"
+                                                    class="btn btn-outline-danger btn-sm"
+                                                    title="Delete"
+                                                    id="deleteOrderBtn-@order.Id">
+
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                     width="16" height="16"
+                                                     fill="currentColor"
+                                                     class="bi bi-trash"
+                                                     viewBox="0 0 16 16">
+                                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1z"/>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pagination and Info -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4" id="paginationContainer">
+        <!-- Page Info -->
+        <div class="mb-3 mb-md-0" id="pageInfo">
+            <p class="text-muted mb-0" id="pageInfoText">
+                Showing 
+                <strong>@((Model.PaginatedOrders.PageNumber - 1) * Model.PaginatedOrders.PageSize + 1)</strong>
+                to 
+                <strong>@Math.Min(Model.PaginatedOrders.PageNumber * Model.PaginatedOrders.PageSize, Model.PaginatedOrders.TotalCount)</strong>
+                of 
+                <strong>@Model.PaginatedOrders.TotalCount</strong>
+                orders
+            </p>
+        </div>
+        
+        <!-- Pagination -->
+        <nav aria-label="Page navigation" id="paginationNav">
+            <ul class="pagination pagination-sm mb-0" id="paginationList">
+                <!-- Previous -->
+                <li class="page-item @(!Model.PaginatedOrders.HasPreviousPage ? "disabled" : "")">
+                    <a class="page-link" href="@GetPageUrl(Model.PaginatedOrders.PageNumber - 1)" id="prevPageLink" aria-label="Previous page">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-left" viewBox="0 0 16 16">
+                          <path fill-rule="evenodd" d='M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0'/>
+                          <path fill-rule="evenodd" d='M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0'/>
+                        </svg>
+                    </a>
+                </li>
+                
+                <!-- Page Numbers -->
+                @{
+                    int startPage = Math.Max(1, Model.PaginatedOrders.PageNumber - 2);
+                    int endPage = Math.Min(Model.PaginatedOrders.TotalPages, Model.PaginatedOrders.PageNumber + 2);
+                }
+                
+                @if (startPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@GetPageUrl(1)" id="firstPageLink">1</a>
+                    </li>
+                    @if (startPage > 2)
+                    {
+                        <li class="page-item disabled">
+                            <span class="page-link" id="ellipsisStart">...</span>
+                        </li>
+                    }
+                }
+                
+                @for (int i = startPage; i <= endPage; i++)
+                {
+                    <li class="page-item @(i == Model.PaginatedOrders.PageNumber ? "active" : "")">
+                        <a class="page-link" href="@GetPageUrl(i)" id="pageLink-@i">@i</a>
+                    </li>
+                }
+                
+                @if (endPage < Model.PaginatedOrders.TotalPages)
+                {
+                    @if (endPage < Model.PaginatedOrders.TotalPages - 1)
+                    {
+                        <li class="page-item disabled">
+                            <span class="page-link" id="ellipsisEnd">...</span>
+                        </li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link" href="@GetPageUrl(Model.PaginatedOrders.TotalPages)" id="lastPageLink">
+                            @Model.PaginatedOrders.TotalPages
+                        </a>
+                    </li>
+                }
+                
+                <!-- Next -->
+                <li class="page-item @(!Model.PaginatedOrders.HasNextPage ? "disabled" : "")">
+                    <a class="page-link" href="@GetPageUrl(Model.PaginatedOrders.PageNumber + 1)" id="nextPageLink" aria-label="Next page">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
+                          <path fill-rule="evenodd" d='M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708'/>
+                          <path fill-rule="evenodd" d='M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708'/>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- Page Size Selector -->
+        <div class="mt-3 mt-md-0" id="pageSizeSelector">
+            <div class="input-group input-group-sm">
+                <span class="input-group-text" id="pageSizeIcon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d='M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5'/>
+                    </svg>
+                </span>
+                <select class="form-select" 
+                        onchange="location = this.value;" 
+                        style="width: auto;"
+                        id="pageSizeSelect"
+                        aria-describedby="pageSizeIcon">
+                    @{
+                        int currentPageSize = Model.PaginatedOrders.PageSize;
+                    }
+                    @foreach (var size in new[] { 5, 10, 20, 50 })
+                    {     
+                        <option value="@Url.Action("Index", new OrderQueryParams { 
+                                PageNumber = 1, 
+                                PageSize = size,
+                                Search = Model.Search,
+                                SortBy = Model.SortBy,
+                                Ascending = Model.Ascending
+                            })"
+                            selected="@(currentPageSize == size)"
+                            id="pageSizeOption-@size">
+                            @size
+                        </option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Auto-submit search after typing stops
+        let searchTimeout;
+        document.getElementById('searchInput')?.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                document.getElementById('pageNumberInput').value = 1;
+                document.getElementById('searchFilterForm').submit();
+            }, 2000);
+        });
+
+        // Tooltip initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+
+        // Accessibility improvements
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('searchFilterForm').submit();
+            }
+        });
+
+        // Focus management for screen readers
+        document.querySelectorAll('.page-link').forEach(link => {
+            link.addEventListener('focus', function() {
+                this.setAttribute('aria-current', 'page');
+            });
+        });
+    </script>
+    
+    <style>
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+            cursor: pointer;
         }
-    </tbody>
-</table>
+        
+        .btn-group .btn {
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .badge {
+            font-size: 0.75em;
+            padding: 0.35em 0.65em;
+        }
+
+        .text-truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Status badge colors */
+        .bg-success { background-color: #198754 !important; }
+        .bg-warning { background-color: #ffc107 !important; }
+        .bg-danger { background-color: #dc3545 !important; }
+        .bg-info { background-color: #0dcaf0 !important; }
+        .bg-primary { background-color: #0d6efd !important; }
+        .bg-secondary { background-color: #6c757d !important; }
+
+        /* Focus styles for accessibility */
+        a:focus, button:focus, input:focus, select:focus {
+            outline: 2px solid #0d6efd;
+            outline-offset: 2px;
+        }
+
+        .page-item.active .page-link {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        /* Skip to content link for screen readers */
+        .skip-to-content {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #0d6efd;
+            color: white;
+            padding: 8px;
+            z-index: 100;
+        }
+        .skip-to-content:focus {
+            top: 0;
+        }
+    </style>
+
+    <!-- Skip to content link (hidden by default, visible on focus) -->
+    <a href="#ordersTable" class="skip-to-content">Skip to orders table</a>
+}

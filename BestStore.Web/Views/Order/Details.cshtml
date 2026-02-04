@@ -215,10 +215,11 @@
             </div>
             <div class="modal-body">
 
-                <form method="get" asp-controller="Order" asp-action="Edit">
-                    <input type="hidden" name="id" value="@Model.Id" />
+                <form method="post" asp-controller="Order" asp-action="Edit">
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <input type="hidden" name="OrderStatus" value="@Model.OrderStatus" />
                     <label>Payment Status</label>
-                    <select class="form-select mb-2" name="payment_status" asp-for="PaymentStatus">
+                    <select class="form-select mb-2" name="PaymentStatus">
                         <option value="pending">pending</option>
                         <option value="accepted">accepted</option>
                         <option value="canceled">canceled</option>
@@ -246,10 +247,11 @@
             </div>
             <div class="modal-body">
 
-                <form method="get" asp-controller="Order" asp-action="Edit">
+                <form method="post" asp-controller="Order" asp-action="Edit">
                     <input type="hidden" name="id" value="@Model.Id" />
+                    <input type="hidden" name="PaymentStatus" value="@Model.PaymentStatus" />
                     <label>Order Status</label>
-                    <select class="form-select mb-2" name="order_status" asp-for="OrderStatus">
+                    <select class="form-select mb-2" name="OrderStatus">
                         <option value="created">created</option>
                         <option value="accepted">accepted</option>
                         <option value="canceled">canceled</option>

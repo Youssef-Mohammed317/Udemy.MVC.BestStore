@@ -9,5 +9,6 @@ namespace BestStore.Infrastructure.Repositories
         public OrderRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
+
     }
 }
