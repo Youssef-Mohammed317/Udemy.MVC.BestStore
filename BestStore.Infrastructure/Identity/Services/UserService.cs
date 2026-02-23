@@ -1,7 +1,7 @@
 ﻿using BestStore.Application.DTOs.User;
 using BestStore.Application.Interfaces.Services;
-using BestStore.Shared.Entities;
-using BestStore.Shared.Result;
+using BestStore.Domain.Entities;
+using BestStore.Domain.Result;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Data;

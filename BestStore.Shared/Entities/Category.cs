@@ -1,9 +1,6 @@
-﻿using BestStore.Shared.Entities.Base;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using BestStore.Domain.Entities.Base;
 
-namespace BestStore.Shared.Entities
+namespace BestStore.Domain.Entities
 {
     public class Category : BaseEntity
     {

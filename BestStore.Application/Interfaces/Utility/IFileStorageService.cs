@@ -1,4 +1,4 @@
-﻿using BestStore.Shared.Result;
+﻿using BestStore.Domain.Result;
 using Microsoft.AspNetCore.Http;
 
 namespace BestStore.Application.Interfaces.Utility

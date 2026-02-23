@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BestStore.Application.DTOs.Product;
-using BestStore.Shared.Entities;
-using BestStore.Shared.Result;
+using BestStore.Domain.Entities;
+using BestStore.Domain.Result;
 using System;
 using System.Collections.Generic;
 using System.Text;

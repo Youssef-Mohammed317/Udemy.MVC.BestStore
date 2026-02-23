@@ -1,7 +1,7 @@
 using BestStore.Application;
 using BestStore.Application.Interfaces.Services;
 using BestStore.Infrastructure;
-using BestStore.Shared;
+using BestStore.Domain;
 namespace BestStore.Web
 {
     public static class Program

@@ -1,6 +1,6 @@
 ﻿using BestStore.Application.DTOs.Cart;
 using BestStore.Application.DTOs.Order;
-using BestStore.Shared.Result;
+using BestStore.Domain.Result;
 
 namespace BestStore.Application.Interfaces.Services
 {

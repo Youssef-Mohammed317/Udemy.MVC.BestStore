@@ -1,5 +1,5 @@
 ﻿using BestStore.Application.DTOs.User;
-using BestStore.Shared.Result;
+using BestStore.Domain.Result;
 using BestStore.Web.Models.ViewModels.User;
 
 namespace BestStore.Web.Mapping

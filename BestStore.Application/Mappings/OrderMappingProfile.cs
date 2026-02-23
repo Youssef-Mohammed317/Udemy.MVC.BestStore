@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BestStore.Application.DTOs.Order;
-using BestStore.Shared.Entities;
+using BestStore.Domain.Entities;
 
 namespace BestStore.Application.Mappings
 {

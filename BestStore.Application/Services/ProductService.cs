@@ -3,8 +3,8 @@ using BestStore.Application.DTOs.Product;
 using BestStore.Application.Interfaces.Repositories;
 using BestStore.Application.Interfaces.Services;
 using BestStore.Application.Interfaces.Utility;
-using BestStore.Shared.Entities;
-using BestStore.Shared.Result;
+using BestStore.Domain.Entities;
+using BestStore.Domain.Result;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -161,11 +161,6 @@ namespace BestStore.Application.Services
             var product = productResult.Value;
 
             var removeResult = _imageStorageService.DeleteImage(product.ImageUrl, rootPath);
-
-            if (removeResult.IsFailure)
-            {
-                return Result<ProductDto>.Failure(removeResult.Error);
-            }
 
             var result = await _unitOfWork.ProductRepository.DeleteAsync(product);
 

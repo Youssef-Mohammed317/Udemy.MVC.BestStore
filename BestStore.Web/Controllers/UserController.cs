@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BestStore.Application.DTOs.User;
 using BestStore.Application.Interfaces.Services;
-using BestStore.Shared.Result;
+using BestStore.Domain.Result;
 using BestStore.Web.Models.ViewModels.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

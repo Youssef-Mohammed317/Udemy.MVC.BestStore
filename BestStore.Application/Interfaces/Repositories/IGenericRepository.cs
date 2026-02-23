@@ -1,5 +1,5 @@
-﻿using BestStore.Shared.Entities.Base;
-using BestStore.Shared.Result;
+﻿using BestStore.Domain.Entities.Base;
+using BestStore.Domain.Result;
 using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;

@@ -1,8 +1,8 @@
-﻿using BestStore.Shared.Entities.Base;
+﻿using BestStore.Domain.Entities.Base;
 using System.ComponentModel.DataAnnotations.Schema;
 
 
-namespace BestStore.Shared.Entities
+namespace BestStore.Domain.Entities
 {
     public class Order : BaseEntity
     {

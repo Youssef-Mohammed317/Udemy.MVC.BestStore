@@ -1,4 +1,4 @@
-﻿using BestStore.Shared.Entities;
+﻿using BestStore.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 

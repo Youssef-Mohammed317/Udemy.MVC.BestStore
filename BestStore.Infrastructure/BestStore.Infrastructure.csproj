@@ -21,7 +21,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\BestStore.Application\BestStore.Application.csproj" />
-		<ProjectReference Include="..\BestStore.Shared\BestStore.Shared.csproj" />
+		<ProjectReference Include="..\BestStore.Domain\BestStore.Domain.csproj" />
+		<ProjectReference Include="..\BestStore.Shared\BestStore.Domain.csproj" />
 	</ItemGroup>
 
 </Project>

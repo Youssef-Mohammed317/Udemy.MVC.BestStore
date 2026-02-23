@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BestStore.Application.DTOs.Category;
 using BestStore.Application.DTOs.Product;
-using BestStore.Shared.Entities;
+using BestStore.Domain.Entities;
 using BestStore.Web.Models.ViewModels.Category;
 using BestStore.Web.Models.ViewModels.Product;
 

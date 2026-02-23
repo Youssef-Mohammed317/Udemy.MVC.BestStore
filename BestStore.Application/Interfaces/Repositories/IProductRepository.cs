@@ -1,5 +1,5 @@
-﻿using BestStore.Shared.Entities;
-using BestStore.Shared;
+﻿using BestStore.Domain.Entities;
+using BestStore.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;

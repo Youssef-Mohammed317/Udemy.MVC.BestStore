@@ -1,7 +1,7 @@
 ﻿using BestStore.Application.Interfaces.Repositories;
 using BestStore.Infrastructure.Contexts;
-using BestStore.Shared.Entities.Base;
-using BestStore.Shared.Result;
+using BestStore.Domain.Entities.Base;
+using BestStore.Domain.Result;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using System;

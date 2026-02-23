@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BestStore.Application.DTOs.Category;
-using BestStore.Shared.Entities;
+using BestStore.Domain.Entities;
 using BestStore.Web.Models.ViewModels.Category;
 
 namespace BestStore.Web.Mapping

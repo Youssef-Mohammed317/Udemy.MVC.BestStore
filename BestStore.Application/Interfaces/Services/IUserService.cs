@@ -1,5 +1,5 @@
 ﻿using BestStore.Application.DTOs.User;
-using BestStore.Shared.Result;
+using BestStore.Domain.Result;
 using System;
 using System.Collections.Generic;
 using System.Text;

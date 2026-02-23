@@ -2,11 +2,11 @@
   <Folder Name="/BLL/">
     <Project Path="BestStore.Application/BestStore.Application.csproj" Id="b209ea6a-54af-4372-a01b-e2c9d80b300b" />
   </Folder>
-  <Folder Name="/Common/">
-    <Project Path="BestStore.Shared/BestStore.Shared.csproj" />
-  </Folder>
   <Folder Name="/DAL/">
     <Project Path="BestStore.Infrastructure/BestStore.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Domain/">
+    <Project Path="BestStore.Shared/BestStore.Domain.csproj" />
   </Folder>
   <Folder Name="/UI/">
     <Project Path="BestStore.Web/BestStore.Web.csproj" />

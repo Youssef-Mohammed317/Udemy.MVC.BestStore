@@ -5,7 +5,7 @@ using System.Text;
 namespace BestStore.Application.Services
 {
     using BestStore.Application.Interfaces.Services;
-    using BestStore.Shared.Result;
+    using BestStore.Domain.Result;
     using Microsoft.Extensions.Configuration;
     using System.Text;
     using System.Text.Json;

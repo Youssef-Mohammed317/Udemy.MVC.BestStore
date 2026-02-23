@@ -1,4 +1,4 @@
-﻿using BestStore.Shared.Entities;
+﻿using BestStore.Domain.Entities;
 using BestStore.Application.Interfaces.Repositories;
 using BestStore.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;

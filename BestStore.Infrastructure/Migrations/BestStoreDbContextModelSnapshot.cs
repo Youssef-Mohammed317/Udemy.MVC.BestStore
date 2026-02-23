@@ -22,7 +22,7 @@ namespace BestStore.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BestStore.Shared.Entities.ApplicationUser", b =>
+            modelBuilder.Entity("BestStore.Domain.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -113,7 +113,7 @@ namespace BestStore.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("BestStore.Shared.Entities.Category", b =>
+            modelBuilder.Entity("BestStore.Domain.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -139,7 +139,7 @@ namespace BestStore.Infrastructure.Migrations
                     b.ToTable("Categories", (string)null);
                 });
 
-            modelBuilder.Entity("BestStore.Shared.Entities.Order", b =>
+            modelBuilder.Entity("BestStore.Domain.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -188,7 +188,7 @@ namespace BestStore.Infrastructure.Migrations
                     b.ToTable("Orders", (string)null);
                 });
 
-            modelBuilder.Entity("BestStore.Shared.Entities.OrderItem", b =>
+            modelBuilder.Entity("BestStore.Domain.Entities.OrderItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -224,7 +224,7 @@ namespace BestStore.Infrastructure.Migrations
                     b.ToTable("OrderItems", (string)null);
                 });
 
-            modelBuilder.Entity("BestStore.Shared.Entities.Product", b =>
+            modelBuilder.Entity("BestStore.Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -408,22 +408,22 @@ namespace BestStore.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("BestStore.Shared.Entities.Order", b =>
+            modelBuilder.Entity("BestStore.Domain.Entities.Order", b =>
                 {
-                    b.HasOne("BestStore.Shared.Entities.ApplicationUser", null)
+                    b.HasOne("BestStore.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BestStore.Shared.Entities.OrderItem", b =>
+            modelBuilder.Entity("BestStore.Domain.Entities.OrderItem", b =>
                 {
-                    b.HasOne("BestStore.Shared.Entities.Order", null)
+                    b.HasOne("BestStore.Domain.Entities.Order", null)
                         .WithMany("Items")
                         .HasForeignKey("OrderId");
 
-                    b.HasOne("BestStore.Shared.Entities.Product", "Product")
+                    b.HasOne("BestStore.Domain.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -432,9 +432,9 @@ namespace BestStore.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("BestStore.Shared.Entities.Product", b =>
+            modelBuilder.Entity("BestStore.Domain.Entities.Product", b =>
                 {
-                    b.HasOne("BestStore.Shared.Entities.Category", "Category")
+                    b.HasOne("BestStore.Domain.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -454,7 +454,7 @@ namespace BestStore.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("BestStore.Shared.Entities.ApplicationUser", null)
+                    b.HasOne("BestStore.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -463,7 +463,7 @@ namespace BestStore.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("BestStore.Shared.Entities.ApplicationUser", null)
+                    b.HasOne("BestStore.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -478,7 +478,7 @@ namespace BestStore.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BestStore.Shared.Entities.ApplicationUser", null)
+                    b.HasOne("BestStore.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -487,19 +487,19 @@ namespace BestStore.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("BestStore.Shared.Entities.ApplicationUser", null)
+                    b.HasOne("BestStore.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BestStore.Shared.Entities.Category", b =>
+            modelBuilder.Entity("BestStore.Domain.Entities.Category", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("BestStore.Shared.Entities.Order", b =>
+            modelBuilder.Entity("BestStore.Domain.Entities.Order", b =>
                 {
                     b.Navigation("Items");
                 });

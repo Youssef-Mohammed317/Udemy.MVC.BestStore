@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BestStore.Shared
+namespace BestStore.Domain
 {
     public class PayPalSettings
     {

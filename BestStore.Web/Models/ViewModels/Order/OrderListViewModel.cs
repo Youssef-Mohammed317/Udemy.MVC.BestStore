@@ -1,4 +1,4 @@
-﻿using BestStore.Shared.Result;
+﻿using BestStore.Domain.Result;
 using BestStore.Web.Models.ViewModels.Category;
 using BestStore.Web.Models.ViewModels.Product;
 

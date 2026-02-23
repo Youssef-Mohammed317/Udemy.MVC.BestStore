@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BestStore.Shared.Entities.Base
+namespace BestStore.Domain.Entities.Base
 {
     public abstract class BaseEntity : IAuditableEntity
     {

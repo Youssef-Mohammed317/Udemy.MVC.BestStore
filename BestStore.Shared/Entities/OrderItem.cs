@@ -1,6 +1,6 @@
-﻿using BestStore.Shared.Entities.Base;
+﻿using BestStore.Domain.Entities.Base;
 
-namespace BestStore.Shared.Entities
+namespace BestStore.Domain.Entities
 {
     public class OrderItem : BaseEntity
     {

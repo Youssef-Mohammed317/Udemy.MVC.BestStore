@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BestStore.Shared.Result
+namespace BestStore.Domain.Result
 {
     public class Error
     {

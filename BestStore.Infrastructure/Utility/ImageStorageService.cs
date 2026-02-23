@@ -1,7 +1,6 @@
 ﻿using BestStore.Application.Interfaces.Utility;
-using BestStore.Shared.Result;
+using BestStore.Domain.Result;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
 
 namespace BestStore.Infrastructure.Utility
 {
@@ -12,10 +11,6 @@ namespace BestStore.Infrastructure.Utility
             ".jpg", ".jpeg", ".png", ".webp", ".gif"
         };
 
-        public ImageStorageService(IHostEnvironment env)
-            : base(env)
-        {
-        }
 
         public async Task<Result<string>> SaveImageAsync(
          IFormFile file,

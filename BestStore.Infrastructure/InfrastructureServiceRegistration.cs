@@ -5,7 +5,7 @@ using BestStore.Infrastructure.Contexts;
 using BestStore.Infrastructure.Identity.Services;
 using BestStore.Infrastructure.Repositories;
 using BestStore.Infrastructure.Utility;
-using BestStore.Shared.Entities;
+using BestStore.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

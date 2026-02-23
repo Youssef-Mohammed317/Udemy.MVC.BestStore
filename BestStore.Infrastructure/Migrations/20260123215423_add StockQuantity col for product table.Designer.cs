@@ -25,7 +25,7 @@ namespace BestStore.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BestStore.Shared.Entities.Product", b =>
+            modelBuilder.Entity("BestStore.Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

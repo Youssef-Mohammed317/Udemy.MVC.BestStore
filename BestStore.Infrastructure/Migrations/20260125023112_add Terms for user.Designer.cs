@@ -25,7 +25,7 @@ namespace BestStore.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BestStore.Shared.Entities.ApplicationUser", b =>
+            modelBuilder.Entity("BestStore.Domain.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -116,7 +116,7 @@ namespace BestStore.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("BestStore.Shared.Entities.Category", b =>
+            modelBuilder.Entity("BestStore.Domain.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -142,7 +142,7 @@ namespace BestStore.Infrastructure.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("BestStore.Shared.Entities.Product", b =>
+            modelBuilder.Entity("BestStore.Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -326,9 +326,9 @@ namespace BestStore.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("BestStore.Shared.Entities.Product", b =>
+            modelBuilder.Entity("BestStore.Domain.Entities.Product", b =>
                 {
-                    b.HasOne("BestStore.Shared.Entities.Category", "Category")
+                    b.HasOne("BestStore.Domain.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -348,7 +348,7 @@ namespace BestStore.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("BestStore.Shared.Entities.ApplicationUser", null)
+                    b.HasOne("BestStore.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -357,7 +357,7 @@ namespace BestStore.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("BestStore.Shared.Entities.ApplicationUser", null)
+                    b.HasOne("BestStore.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -372,7 +372,7 @@ namespace BestStore.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BestStore.Shared.Entities.ApplicationUser", null)
+                    b.HasOne("BestStore.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -381,14 +381,14 @@ namespace BestStore.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("BestStore.Shared.Entities.ApplicationUser", null)
+                    b.HasOne("BestStore.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BestStore.Shared.Entities.Category", b =>
+            modelBuilder.Entity("BestStore.Domain.Entities.Category", b =>
                 {
                     b.Navigation("Products");
                 });

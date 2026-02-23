@@ -1,7 +1,7 @@
-﻿using BestStore.Shared.Entities;
+﻿using BestStore.Domain.Entities;
 using BestStore.Application.Interfaces.Repositories;
 using BestStore.Infrastructure.Contexts;
-using BestStore.Shared.Result;
+using BestStore.Domain.Result;
 using Microsoft.EntityFrameworkCore;
 
 namespace BestStore.Infrastructure.Repositories

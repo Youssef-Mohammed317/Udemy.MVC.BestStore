@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BestStore.Application.DTOs.Category;
-using BestStore.Shared.Entities;
+using BestStore.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -1,4 +1,4 @@
-﻿namespace BestStore.Shared.Entities.Base
+﻿namespace BestStore.Domain.Entities.Base
 {
     public interface IAuditableEntity
     {

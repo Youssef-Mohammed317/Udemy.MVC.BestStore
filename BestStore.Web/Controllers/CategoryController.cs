@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using BestStore.Application.DTOs.Category;
 using BestStore.Application.Interfaces.Services;
-using BestStore.Shared.Entities;
-using BestStore.Shared.Result;
+using BestStore.Domain.Entities;
+using BestStore.Domain.Result;
 using BestStore.Web.Models.ViewModels.Category;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

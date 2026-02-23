@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BestStore.Application.DTOs.Product;
-using BestStore.Shared.Result;
+using BestStore.Domain.Result;
 using BestStore.Web.Models.ViewModels.Product;
 
 namespace BestStore.Web.Mapping

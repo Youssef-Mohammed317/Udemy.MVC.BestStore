@@ -1,4 +1,4 @@
-﻿using BestStore.Shared.Entities;
+﻿using BestStore.Domain.Entities;
 
 namespace BestStore.Application.Interfaces.Repositories
 {

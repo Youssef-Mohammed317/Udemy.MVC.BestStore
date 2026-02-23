@@ -2,8 +2,8 @@
 using Azure;
 using BestStore.Application.DTOs.Cart;
 using BestStore.Application.Interfaces.Services;
-using BestStore.Shared;
-using BestStore.Shared.Entities;
+using BestStore.Domain;
+using BestStore.Domain.Entities;
 using BestStore.Web.Helpers;
 using BestStore.Web.Models.ViewModels.Cart;
 using BestStore.Web.Models.ViewModels.Checkout;

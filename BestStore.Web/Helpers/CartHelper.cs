@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BestStore.Application.Interfaces.Services;
-using BestStore.Shared.Entities;
+using BestStore.Domain.Entities;
 using BestStore.Web.Models.ViewModels.Order;
 using BestStore.Web.Models.ViewModels.Product;
 using Microsoft.EntityFrameworkCore;

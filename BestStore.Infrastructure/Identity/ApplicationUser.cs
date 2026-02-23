@@ -1,10 +1,10 @@
-﻿using BestStore.Shared.Entities.Base;
+﻿using BestStore.Domain.Entities.Base;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BestStore.Shared.Entities
+namespace BestStore.Domain.Entities
 {
     public class ApplicationUser : IdentityUser, IAuditableEntity
     {

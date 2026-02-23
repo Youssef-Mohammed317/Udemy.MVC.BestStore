@@ -1,6 +1,6 @@
 ﻿using BestStore.Application.Interfaces.Repositories;
 using BestStore.Infrastructure.Contexts;
-using BestStore.Shared.Result;
+using BestStore.Domain.Result;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

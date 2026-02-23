@@ -1,5 +1,5 @@
 ﻿using BestStore.Application.DTOs.Product;
-using BestStore.Shared.Result;
+using BestStore.Domain.Result;
 
 namespace BestStore.Application.Interfaces.Services
 {

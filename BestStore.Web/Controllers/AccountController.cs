@@ -333,7 +333,7 @@ namespace BestStore.Web.Controllers
         }
 
 
-        private async Task<Shared.Result.Result> SendConfirmEmailAsync(SendConfirmEmailViewModel model)
+        private async Task<Domain.Result.Result> SendConfirmEmailAsync(SendConfirmEmailViewModel model)
         {
             var confirmationLink = Url.Action(
                 "ConfirmEmail",

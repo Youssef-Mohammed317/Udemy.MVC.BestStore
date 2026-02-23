@@ -1,7 +1,7 @@
 ﻿
 using BestStore.Application.DTOs.Product;
-using BestStore.Shared.Entities;
-using BestStore.Shared.Entities.Base;
+using BestStore.Domain.Entities;
+using BestStore.Domain.Entities.Base;
 
 namespace BestStore.Application.DTOs.Order
 {

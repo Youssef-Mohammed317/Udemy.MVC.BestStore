@@ -104,38 +104,26 @@
             </div>
             
             <div class="col-md-3">
-    <div class="dropdown w-100">
-        <button class="btn btn-outline-secondary dropdown-toggle w-100"
-                type="button"
-                data-bs-toggle="dropdown"
-                data-bs-auto-close="true"
-                aria-expanded="false">
-            Sort By @(Model.SortBy == "CreatedAt" ? "Date Created" : Model.SortBy)
-        </button>
+                <div class="dropdown w-100" id="product-dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle w-100"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            data-bs-auto-close="true"
+                            aria-expanded="false">
+                        Sort By @(Model.SortBy == "CreatedAt" ? "Date Created" : Model.SortBy)
+                    </button>
 
-        <ul class="dropdown-menu animate__animated animate__fadeIn animate__faster"
-            style="animation-duration: 0.2s;">
-            <li><a class="dropdown-item transition-all" 
-                   href="@GetSortUrl("Id")"
-                   style="transition: all 0.15s ease-in-out;">ID</a></li>
-            <li><a class="dropdown-item transition-all" 
-                   href="@GetSortUrl("Name")"
-                   style="transition: all 0.15s ease-in-out;">Name</a></li>
-            <li><a class="dropdown-item transition-all" 
-                   href="@GetSortUrl("Price")"
-                   style="transition: all 0.15s ease-in-out;">Price</a></li>
-            <li><a class="dropdown-item transition-all" 
-                   href="@GetSortUrl("Brand")"
-                   style="transition: all 0.15s ease-in-out;">Brand</a></li>
-            <li><a class="dropdown-item transition-all" 
-                   href="@GetSortUrl("Category")"
-                   style="transition: all 0.15s ease-in-out;">Category</a></li>
-            <li><a class="dropdown-item transition-all" 
-                   href="@GetSortUrl("CreatedAt")"
-                   style="transition: all 0.15s ease-in-out;">Date Created</a></li>
-        </ul>
-    </div>
-</div>
+                    <ul class="dropdown-menu w-100 animate__animated animate__fadeIn animate__faster"
+                        style=" animation:none">
+                        <li><a class="dropdown-item" href="@GetSortUrl("Id")">ID</a></li>
+                        <li><a class="dropdown-item" href="@GetSortUrl("Name")">Name</a></li>
+                        <li><a class="dropdown-item" href="@GetSortUrl("Price")">Price</a></li>
+                        <li><a class="dropdown-item" href="@GetSortUrl("Brand")">Brand</a></li>
+                        <li><a class="dropdown-item" href="@GetSortUrl("Category")">Category</a></li>
+                        <li><a class="dropdown-item" href="@GetSortUrl("CreatedAt")">Date Created</a></li>
+                    </ul>
+                </div>
+            </div>
             
             <div class="col-md-2">
                 <div class="d-grid gap-2">
@@ -471,6 +459,7 @@ else
             });
         });
     </script>
+    }
     
     <style>
         .table-hover tbody tr:hover {
@@ -516,8 +505,8 @@ else
             top: 0;
         }
 
+
     </style>
 
     <!-- Skip to content link (hidden by default, visible on focus) -->
     <a href="#productsTable" class="skip-to-content">Skip to products table</a>
-}

@@ -91,8 +91,8 @@
                         Sort By @(Model.SortBy == "CreatedAt" ? "Date Created"  : Model.SortBy)
                     </button>
 
-                    <ul class="dropdown-menu animate__animated animate__fadeIn animate__faster"
-                        style="animation-duration: 0.2s;">
+                    <ul class="dropdown-menu animate__animated animate__fadeIn animate__faster" 
+                        style="animation:none !important">
                         <li><a class="dropdown-item transition-all" 
                                href="@GetSortUrl("Id")"
                                style="transition: all 0.15s ease-in-out;">ID</a></li>

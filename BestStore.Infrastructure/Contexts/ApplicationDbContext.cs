@@ -1,5 +1,5 @@
-﻿using BestStore.Shared.Entities;
-using BestStore.Shared.Entities.Base;
+﻿using BestStore.Domain.Entities;
+using BestStore.Domain.Entities.Base;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

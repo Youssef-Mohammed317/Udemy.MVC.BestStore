@@ -1,5 +1,5 @@
 ﻿using BestStore.Application.Interfaces.Utility;
-using BestStore.Shared.Result;
+using BestStore.Domain.Result;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 
@@ -7,12 +7,7 @@ namespace BestStore.Infrastructure.Utility
 {
     public abstract class FileStorageServiceBase : IFileStorageService
     {
-        protected readonly IHostEnvironment _env;
-
-        protected FileStorageServiceBase(IHostEnvironment env)
-        {
-            _env = env;
-        }
+        
 
         public async Task<Result<string>> SaveAsync(IFormFile file, string rootPath, params string[] folders)
         {
