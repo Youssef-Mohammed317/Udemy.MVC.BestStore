@@ -17,12 +17,10 @@ namespace BestStore.Infrastructure.Utility
         public async Task<Result<string>> SaveAsync(IFormFile file, string rootPath, params string[] folders)
         {
             if (file == null)
-                return Result<string>.Failure(
-                    Error.Failure($"Null.{nameof(file)}", "This file can't be null"));
+                return Result<string>.Failure(Error.Failure($"Null.{nameof(file)}", "This file can't be null"));
 
             if (string.IsNullOrWhiteSpace(rootPath))
-                return Result<string>.Failure(
-                    Error.Failure("InvalidPath", "Root path is invalid"));
+                return Result<string>.Failure(Error.Failure("InvalidPath", "Root path is invalid"));
 
             var uploadPath = BuildUploadPath(rootPath, folders);
             EnsureDirectoryExists(uploadPath);
@@ -30,22 +28,18 @@ namespace BestStore.Infrastructure.Utility
             var finalFileName = GenerateFileName(file.FileName);
             var fullPath = Path.Combine(uploadPath, finalFileName);
 
-
-            using (var fs = new FileStream(fullPath, FileMode.Create))
+            try
             {
-                try
-                {
-                    await file.CopyToAsync(fs);
-                }
-                catch
-                {
-                    return Result<string>.Failure(Error.Failure("IOError", "An error occurred while saving the file."));
-                }
+                using var fs = new FileStream(fullPath, FileMode.CreateNew);
+                await file.CopyToAsync(fs);
+            }
+            catch (Exception)
+            {
+                return Result<string>.Failure(Error.Failure("IOError", "An error occurred while saving the file."));
             }
 
             return Result<string>.Success(BuildRelativePath(finalFileName, folders));
         }
-
         public Result Delete(string filePath, string rootPath)
         {
             if (string.IsNullOrWhiteSpace(filePath))

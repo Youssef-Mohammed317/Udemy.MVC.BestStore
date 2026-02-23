@@ -18,9 +18,9 @@ namespace BestStore.Infrastructure.Utility
         }
 
         public async Task<Result<string>> SaveImageAsync(
-     IFormFile file,
-     string rootPath,
-     params string[] folders)
+         IFormFile file,
+         string rootPath,
+         params string[] folders)
         {
             if (file == null)
                 return Result<string>.Failure(

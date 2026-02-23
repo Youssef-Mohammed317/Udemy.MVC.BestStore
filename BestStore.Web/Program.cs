@@ -47,6 +47,7 @@ namespace BestStore.Web
 
                 await initializer.InitializeAsync();
             }
+            app.UseStaticFiles();   // لازم قبل UseRouting
 
             app.UseHttpsRedirection();
             app.UseRouting();
