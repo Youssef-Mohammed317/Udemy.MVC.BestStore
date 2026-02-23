@@ -160,7 +160,6 @@ namespace BestStore.Application.Services
 
             var product = productResult.Value;
 
-            var removeResult = _imageStorageService.DeleteImage(product.ImageUrl, rootPath);
 
             var result = await _unitOfWork.ProductRepository.DeleteAsync(product);
 
@@ -169,11 +168,14 @@ namespace BestStore.Application.Services
                 return Result.Failure(result.Error);
             }
 
+
             var saveResult = await _unitOfWork.SaveChangesAsync();
+
             if (saveResult.IsFailure)
             {
                 return Result.Failure(saveResult.Error);
             }
+            var removeResult = _imageStorageService.DeleteImage(product.ImageUrl, rootPath);
             return Result.Success();
         }
 
