@@ -37,7 +37,7 @@
 
 
 
-    function addToCart(button, id) {
+    function addToCart(button, id,stockQuantity) {
         let cart = getShoppingCart();
 
         let quantity = cart[id]
@@ -46,7 +46,10 @@
             cart[id] = 1
         }
         else {
-            cart[id] = Number(quantity) + 1;
+           if(stockQuantity > quantity )
+            {
+                cart[id] = Number(quantity) + 1;
+            }
         }
 
         saveCart(cart);
@@ -64,7 +67,7 @@
     }
 
 
-    function increase(id) {
+    function increase(id, stockQuantity) {
         let cart = getShoppingCart();
 
         let quantity = cart[id]
@@ -73,7 +76,11 @@
             cart[id] = 1
         }
         else {
-            cart[id] = Number(quantity) + 1;
+
+            if(stockQuantity > quantity )
+            {
+                cart[id] = Number(quantity) + 1;
+            }
         }
 
         saveCart(cart);
@@ -106,6 +113,17 @@
             saveCart(cart)
             location.reload()
         }
+    }
+    function getQuantity(id)
+    {
+        let cart = getShoppingCart();
+
+        let quantity = cart[id]
+        if (isNaN(quantity)) {
+            // quantity is Not a Number => set it to 1
+            cart[id] = 1
+        }
+        return quantity;
     }
 
   

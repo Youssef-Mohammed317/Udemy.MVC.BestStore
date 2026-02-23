@@ -27,9 +27,9 @@
                                     onclick="decrease(@item.Product.Id)">
                                 -
                             </button>
-                            <span class="border rounded-3 p-2 m-1">@item.Quantity</span>
+                            <span class="border rounded-3 p-2 m-1">@(item.Quantity)</span>
                             <button type="button" class="btn btn-outline-secondary btn-sm"
-                                    onclick="increase(@item.Product.Id)">
+                                    onclick="increase(@item.Product.Id, @item.Product.StockQuantity)">
                                 +
                             </button>
                         </td>

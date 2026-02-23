@@ -1,18 +1,13 @@
 ﻿using AutoMapper;
 using BestStore.Application.DTOs.Cart;
 using BestStore.Application.DTOs.Order;
-using BestStore.Application.DTOs.Product;
 using BestStore.Application.Interfaces.Repositories;
 using BestStore.Application.Interfaces.Services;
-using BestStore.Application.Interfaces.Utility;
 using BestStore.Shared.Entities;
 using BestStore.Shared.Result;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace BestStore.Application.Services
 {
@@ -38,6 +33,7 @@ namespace BestStore.Application.Services
             {
                 return Result.Failure(Error.Failure("Auth", "You must be auth"));
             }
+
             var order = new Order
             {
                 ClientId = userId,
@@ -50,16 +46,36 @@ namespace BestStore.Application.Services
                 OrderStatus = "created",
             };
 
-            var result = await _unitOfWork.OrderRepository.AddAsync(order);
+
+            var addResult = await _unitOfWork.OrderRepository.AddAsync(order);
+            if (addResult.IsFailure)
+            {
+                return Result.Failure(addResult.Error);
+            }
+
+            foreach (var item in cartDto.CartItems)
+            {
+                var entityResult = await _unitOfWork.ProductRepository.GetByIdAsync(item.ProductId);
+                if (entityResult.IsFailure)
+                {
+                    return Result.Failure(entityResult.Error);
+                }
+                var entity = entityResult.Value;
+
+                if (entity.StockQuantity > 0 && entity.StockQuantity >= item.Quantity)
+                {
+                    entity.StockQuantity -= item.Quantity;
+                    await _unitOfWork.ProductRepository.UpdateAsync(entity);
+                }
+            }
+
+            var result = await _unitOfWork.SaveChangesAsync();
             if (result.IsFailure)
             {
                 return Result.Failure(result.Error);
             }
-            result = await _unitOfWork.SaveChangesAsync();
-            if (result.IsFailure)
-            {
-                return Result.Failure(result.Error);
-            }
+
+
             return Result.Success();
         }
 
