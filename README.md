@@ -2,7 +2,7 @@
 
 A full-featured **ASP.NET Core MVC (Razor Views)** E-Commerce application built with a clean, maintainable architecture and real-world features: **Identity + Roles**, **Email workflows**, **Cookie-based cart**, **PayPal checkout**, **image handling**, and a unified **Result<T>** pattern.
 
-🌐 **Live Demo (Azure):** https://beststore-mvc-dev-apdqe6fja9dgg8hd.polandcentral-01.azurewebsites.net/ *  
+🌐 **Live Demo (Azure):** https://beststore-mvc-dev-apdqe6fja9dgg8hd.polandcentral-01.azurewebsites.net/  
 🎥 **Walkthrough Video:** https://drive.google.com/file/d/1kFe04116QCRUnx0q7SxTS2tMT79i_R3D/view?usp=drive_link  
 📜 **Certificate:** https://drive.google.com/file/d/1YIg6vdumR7D6KExPfneZDi7ZP7JNzIwE/view?usp=drive_link  
 🎓 **Udemy Course:** https://www.udemy.com/course/aspnet-core-mvc-guide/  
