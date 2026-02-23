@@ -18,28 +18,30 @@ namespace BestStore.Infrastructure.Utility
         }
 
         public async Task<Result<string>> SaveImageAsync(
-            IFormFile file,
-            params string[] folders)
+     IFormFile file,
+     string rootPath,
+     params string[] folders)
         {
-            var result = ValidateImage(file.FileName);
+            if (file == null)
+                return Result<string>.Failure(
+                    Error.Failure("Null.File", "File can't be null"));
 
-            if (result.IsFailure)
-            {
-                return Result<string>.Failure(result.Error);
-            }
+            var validation = ValidateImage(file.FileName);
+
+            if (validation.IsFailure)
+                return Result<string>.Failure(validation.Error);
 
             var finalFolders = new[] { "images" }
                 .Concat(folders ?? Array.Empty<string>())
                 .ToArray();
 
-            return await SaveAsync(file, finalFolders);
-
+            return await SaveAsync(file, rootPath, finalFolders);
         }
 
-        public Result DeleteImage(string imagePath)
+        public Result DeleteImage(string imagePath, string rootPath)
         {
-            
-            return Delete(imagePath);
+
+            return Delete(imagePath, rootPath);
         }
 
         private static Result ValidateImage(string fileName)

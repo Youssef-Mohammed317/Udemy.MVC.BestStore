@@ -1,8 +1,5 @@
 ﻿using BestStore.Application.DTOs.Product;
 using BestStore.Shared.Result;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BestStore.Application.Interfaces.Services
 {
@@ -11,10 +8,10 @@ namespace BestStore.Application.Interfaces.Services
         Task<Result<List<ProductDto>>> GetAllProductsAsync();
         Task<Result<ProductDetailsDto>> GetProductDetailsByIdAsync(int id);
 
-        Task<Result<ProductDto>> CreateProductAsync(CreateProductDto productDto);
-        Task<Result<ProductDto>> UpdateProductAsync(UpdateProductDto productDto);
+        Task<Result<ProductDto>> CreateProductAsync(CreateProductDto productDto, string rootPath);
+        Task<Result<ProductDto>> UpdateProductAsync(UpdateProductDto productDto, string rootPath);
         Task<Result<ProductDto>> GetProductByIdAsync(int id);
-        Task<Result> DeleteProductAsync(int id);
+        Task<Result> DeleteProductAsync(int id, string rootPath);
 
         Task<Result<PaginatedResult<ProductDto>>> GetProductsPaginatedAsync(
         string search = null,

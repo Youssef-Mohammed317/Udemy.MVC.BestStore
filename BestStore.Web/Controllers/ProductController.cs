@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using BestStore.Application.DTOs.Product;
 using BestStore.Application.Interfaces.Services;
-using BestStore.Shared.Entities;
 using BestStore.Shared.Result;
 using BestStore.Web.Models.ViewModels.Category;
 using BestStore.Web.Models.ViewModels.Product;
@@ -15,15 +14,17 @@ namespace BestStore.Web.Controllers
         private readonly IProductService _productService;
         private readonly IMapper _mapper;
         private readonly ICategoryService _categoryService;
+        private readonly IWebHostEnvironment _env;
         private readonly string _errorMessageKey = "ErrorMessage";
         private readonly string _successMessageKey = "SuccessMessage";
         private readonly string _indexKey = "Index";
 
-        public ProductController(IProductService productService, IMapper mapper, ICategoryService categoryService)
+        public ProductController(IProductService productService, IMapper mapper, ICategoryService categoryService, IWebHostEnvironment env)
         {
             this._productService = productService;
             this._mapper = mapper;
             this._categoryService = categoryService;
+            this._env = env;
         }
 
         [Authorize(Roles = "Admin,SuperAdmin")]
@@ -96,7 +97,7 @@ namespace BestStore.Web.Controllers
             {
                 var productDto = _mapper.Map<CreateProductDto>(model);
 
-                var result = await _productService.CreateProductAsync(productDto);
+                var result = await _productService.CreateProductAsync(productDto, _env.WebRootPath);
 
                 if (result.IsSuccess)
                 {
@@ -154,7 +155,7 @@ namespace BestStore.Web.Controllers
             {
                 var productDto = _mapper.Map<UpdateProductDto>(model);
 
-                var result = await _productService.UpdateProductAsync(productDto);
+                var result = await _productService.UpdateProductAsync(productDto, _env.WebRootPath);
 
                 if (result.IsSuccess)
                 {
@@ -180,7 +181,7 @@ namespace BestStore.Web.Controllers
         [Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _productService.DeleteProductAsync(id);
+            var result = await _productService.DeleteProductAsync(id, _env.WebRootPath);
             if (result.IsSuccess)
             {
                 TempData[_successMessageKey] = "Product deleted successfully.";

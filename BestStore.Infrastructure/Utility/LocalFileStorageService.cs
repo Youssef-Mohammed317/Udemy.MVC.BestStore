@@ -14,17 +14,22 @@ namespace BestStore.Infrastructure.Utility
             _env = env;
         }
 
-        public async Task<Result<string>> SaveAsync(IFormFile file, params string[] folders)
+        public async Task<Result<string>> SaveAsync(IFormFile file, string rootPath, params string[] folders)
         {
             if (file == null)
-                return Result<string>.Failure(Error.Failure($"Null.{nameof(file)}", "This file can't be null"));
+                return Result<string>.Failure(
+                    Error.Failure($"Null.{nameof(file)}", "This file can't be null"));
 
+            if (string.IsNullOrWhiteSpace(rootPath))
+                return Result<string>.Failure(
+                    Error.Failure("InvalidPath", "Root path is invalid"));
 
-            var uploadPath = BuildUploadPath(folders);
+            var uploadPath = BuildUploadPath(rootPath, folders);
             EnsureDirectoryExists(uploadPath);
 
             var finalFileName = GenerateFileName(file.FileName);
             var fullPath = Path.Combine(uploadPath, finalFileName);
+
 
             using (var fs = new FileStream(fullPath, FileMode.Create))
             {
@@ -41,26 +46,41 @@ namespace BestStore.Infrastructure.Utility
             return Result<string>.Success(BuildRelativePath(finalFileName, folders));
         }
 
-        public Result Delete(string filePath)
+        public Result Delete(string filePath, string rootPath)
         {
             if (string.IsNullOrWhiteSpace(filePath))
-                return Result.Failure(Error.Failure("Null", "File path is null"));
+                return Result.Failure(
+                    Error.Failure("Null", "File path is null"));
 
-            var fullPath = Path.Combine(
-                _env.ContentRootPath,
-                "wwwroot",
-                filePath.TrimStart('/')
-            );
+            if (string.IsNullOrWhiteSpace(rootPath))
+                return Result.Failure(
+                    Error.Failure("InvalidRoot", "Root path is invalid"));
 
-                fullPath = fullPath.Replace("/", "\\");
-            if (File.Exists(fullPath))
+            var cleanPath = filePath.TrimStart('/');
+
+            if (cleanPath.Contains(".."))
+                return Result.Failure(
+                    Error.Failure("InvalidPath", "Invalid file path"));
+
+            var fullPath = Path.Combine(rootPath, cleanPath);
+
+            try
             {
-                File.Delete(fullPath);
-                return Result.Success();
-            }
-            return Result.Failure(Error.Failure("NotFound", "File path not found"));
-        }
+                if (File.Exists(fullPath))
+                {
+                    File.Delete(fullPath);
+                    return Result.Success();
+                }
 
+                return Result.Failure(
+                    Error.Failure("NotFound", "File not found"));
+            }
+            catch (IOException)
+            {
+                return Result.Failure(
+                    Error.Failure("IOError", "Error deleting file"));
+            }
+        }
 
         protected virtual string GenerateFileName(string originalFileName)
         {
@@ -68,28 +88,21 @@ namespace BestStore.Infrastructure.Utility
             return $"{Guid.NewGuid()}_{DateTime.Now.ToString("yyyyMMddHHmmssfff")}{ext}";
         }
 
-        protected virtual string BuildUploadPath(params string[] folders)
+        protected virtual string BuildUploadPath(string rootPath, params string[] folders)
         {
-            var path = Path.Combine(_env.ContentRootPath, "wwwroot", "uploads");
-
-            if (folders != null)
-            {
-                foreach (var folder in folders)
-
-                    path = Path.Combine(path, folder);
-            }
-
-            return path;
+            return Path.Combine(
+                new[] { rootPath, "uploads" }
+                .Concat(folders ?? Array.Empty<string>())
+                .ToArray());
         }
 
         protected virtual string BuildRelativePath(string fileName, params string[] folders)
         {
-            var relative = "/uploads";
+            var segments = new[] { "uploads" }
+                .Concat(folders ?? Array.Empty<string>())
+                .Append(fileName);
 
-            if (folders != null && folders.Length > 0)
-                relative += "/" + string.Join("/", folders);
-
-            return $"{relative}/{fileName}";
+            return "/" + string.Join("/", segments);
         }
 
         protected static void EnsureDirectoryExists(string path)

@@ -57,7 +57,7 @@ namespace BestStore.Application.Services
             return Result<ProductDetailsDto>.Success(productDetailsDto);
         }
 
-        public async Task<Result<ProductDto>> CreateProductAsync(CreateProductDto productDto)
+        public async Task<Result<ProductDto>> CreateProductAsync(CreateProductDto productDto, string rootPath)
         {
             var product = _mapper.Map<Product>(productDto);
 
@@ -65,7 +65,7 @@ namespace BestStore.Application.Services
             {
                 return Result<ProductDto>.Failure(Error.Failure("Product.ImageMissing", "Product image is required."));
             }
-            var uploadImageResult = await _imageStorageService.SaveImageAsync(productDto.ImageFile, "products");
+            var uploadImageResult = await _imageStorageService.SaveImageAsync(productDto.ImageFile, rootPath, "products");
             if (uploadImageResult.IsFailure)
             {
                 return Result<ProductDto>.Failure(Error.Failure("Product.ImageUploadFailed", "Failed to upload product image."));
@@ -83,50 +83,57 @@ namespace BestStore.Application.Services
             }
             else
             {
+                _imageStorageService.DeleteImage(product.ImageUrl, rootPath);
                 return Result<ProductDto>.Failure(saveResult.Error);
             }
         }
-        public async Task<Result<ProductDto>> UpdateProductAsync(UpdateProductDto productDto)
+        public async Task<Result<ProductDto>> UpdateProductAsync(
+      UpdateProductDto productDto,
+      string rootPath)
         {
-            var productResult = await _unitOfWork.ProductRepository.GetByIdAsync(productDto.Id, include: x => x.Include(x => x.Category));
+            var productResult = await _unitOfWork.ProductRepository
+                .GetByIdAsync(productDto.Id,
+                    include: x => x.Include(x => x.Category));
+
             if (productResult.IsFailure)
-            {
                 return Result<ProductDto>.Failure(productResult.Error);
-            }
 
             var product = productResult.Value;
 
             _mapper.Map(productDto, product);
 
+            string? oldImageUrl = product.ImageUrl;
+            string? newImageUrl = null;
+
             if (productDto.ImageFile != null)
             {
                 var uploadResult = await _imageStorageService
-                    .SaveImageAsync(productDto.ImageFile, "products");
+                    .SaveImageAsync(productDto.ImageFile, rootPath, "products");
 
                 if (uploadResult.IsFailure)
-                {
                     return Result<ProductDto>.Failure(uploadResult.Error);
-                }
 
-                var removeResult = _imageStorageService.DeleteImage(product.ImageUrl);
-
-                if (removeResult.IsFailure)
-                {
-                    _imageStorageService.DeleteImage(uploadResult.Value);
-                    return Result<ProductDto>.Failure(removeResult.Error);
-                }
-
-                product.ImageUrl = uploadResult.Value;
-
+                newImageUrl = uploadResult.Value;
+                product.ImageUrl = newImageUrl;
             }
 
             var saveResult = await _unitOfWork.SaveChangesAsync();
+
             if (saveResult.IsFailure)
             {
+                if (newImageUrl != null)
+                    _imageStorageService.DeleteImage(newImageUrl, rootPath);
+
                 return Result<ProductDto>.Failure(saveResult.Error);
             }
 
-            return Result<ProductDto>.Success(_mapper.Map<ProductDto>(product));
+            if (newImageUrl != null && !string.IsNullOrWhiteSpace(oldImageUrl))
+            {
+                _imageStorageService.DeleteImage(oldImageUrl, rootPath);
+            }
+
+            return Result<ProductDto>.Success(
+                _mapper.Map<ProductDto>(product));
         }
 
         public async Task<Result<ProductDto>> GetProductByIdAsync(int id)
@@ -142,7 +149,7 @@ namespace BestStore.Application.Services
             return Result<ProductDto>.Success(productDto);
         }
 
-        public async Task<Result> DeleteProductAsync(int id)
+        public async Task<Result> DeleteProductAsync(int id, string rootPath)
         {
             var productResult = await _unitOfWork.ProductRepository.GetByIdAsync(id, include: x => x.Include(x => x.Category));
 
@@ -153,7 +160,7 @@ namespace BestStore.Application.Services
 
             var product = productResult.Value;
 
-            var removeResult = _imageStorageService.DeleteImage(product.ImageUrl);
+            var removeResult = _imageStorageService.DeleteImage(product.ImageUrl, rootPath);
 
             if (removeResult.IsFailure)
             {

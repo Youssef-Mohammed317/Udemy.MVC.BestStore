@@ -5,8 +5,8 @@ namespace BestStore.Application.Interfaces.Utility
 {
     public interface IImageStorageService
     {
-        Task<Result<string>> SaveImageAsync(IFormFile file, params string[] folders);
-        Result DeleteImage(string imagePath);
+        Task<Result<string>> SaveImageAsync(IFormFile file, string rootPath, params string[] folders);
+        Result DeleteImage(string imagePath, string rootPath);
     }
 
 }
