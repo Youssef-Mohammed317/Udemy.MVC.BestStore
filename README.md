@@ -1,143 +1,154 @@
-Udemy The 4 th Project
-# 🛒 ASP.NET Core MVC E-Commerce Project
+# 🛒 BestStore – ASP.NET Core MVC E-Commerce (Main MVC Project)
 
-A full-featured **ASP.NET Core MVC** application built using a **3-Layer Architecture + Common Layer**, following clean architecture principles and best practices.  
-The project focuses on **maintainability, scalability, and real-world features** commonly used in production systems.
+A full-featured **ASP.NET Core MVC (Razor Views)** E-Commerce application built with a clean, maintainable architecture and real-world features: **Identity + Roles**, **Email workflows**, **Cookie-based cart**, **PayPal checkout**, **image handling**, and a unified **Result<T>** pattern.
+
+🌐 **Live Demo (Azure):** *(Coming soon — will be deployed on Azure)*  
+🎥 **Walkthrough Video:** https://drive.google.com/file/d/1kFe04116QCRUnx0q7SxTS2tMT79i_R3D/view?usp=drive_link  
+📜 **Certificate:** https://drive.google.com/file/d/1YIg6vdumR7D6KExPfneZDi7ZP7JNzIwE/view?usp=drive_link  
+🎓 **Udemy Course:** https://www.udemy.com/course/aspnet-core-mvc-guide/  
 
 ---
 
-## 🧱 Architecture Overview
+## ✨ Highlights
 
-The solution is structured into **4 main layers**:
+- Clean **3-Layer Architecture + Common Layer**
+- **Result<T> pattern** for unified success/failure handling
+- **Repository + Unit of Work** patterns
+- **AutoMapper** mapping:
+  - Entity ↔ DTO
+  - DTO ↔ ViewModel
+- Full **ASP.NET Core Identity**:
+  - Registration / Login
+  - Email verification
+  - Admin / Customer roles
+  - Change / Forgot / Reset password flows
+- **Brevo** email sender integration
+- Product listing with:
+  - Pagination
+  - Sorting (single column)
+  - Search (Name / Brand)
+- Shopping cart:
+  - Cookie-based (JSON → encoded storage)
+  - Decoded & deserialized per request
+- **PayPal** payment gateway integrated into checkout
+- Images:
+  - Upload product images
+  - Safe delete from storage
 
-### 🔹 Common Layer
-Shared components used across the entire application:
+---
+
+## 🧱 Architecture
+
+This solution is structured into multiple layers with clear responsibilities:
+
+### ✅ Common Layer (Shared)
 - Domain Entities
-- Result Pattern (Success / Failure handling)
-- Common models and base classes
+- `Result<T>` pattern for consistent API/UI responses
+- Shared base models / constants
 
----
-
-### 🔹 Data Access Layer
-Responsible for all database-related operations:
-- Entity Framework Core DbContext
-- Identity configuration
+### ✅ Data Access Layer (Infrastructure)
+- Entity Framework Core
+- Application DbContext
+- Identity DbContext
 - Fluent API configurations
 - Repository implementations
-- Identity services implementations
+- Identity service implementations
 
----
-
-### 🔹 Services Layer
-Contains business logic and application services:
+### ✅ Services Layer (Application)
 - DTOs
-- Interfaces for repositories and services
-- Business service implementations
+- Interfaces for repositories & services
+- Business services implementations
 - Email service implementation
-- Services unrelated to Identity
+- Non-Identity domain services
 
----
-
-### 🔹 Web Layer (MVC)
-The presentation layer:
+### ✅ Web Layer (MVC)
 - MVC Controllers
 - ViewModels
 - Razor Views
-- `CurrentUserService` implementation
-- TempData handling for UI alerts
+- `CurrentUserService` (based on HttpContext)
+- TempData alerts / notifications
 
 ---
 
-## 🛠️ Technical Features
+## 🔁 Design Patterns Used
 
-- ✅ ASP.NET Core MVC
-- ✅ AutoMapper
-- ✅ Dependency Injection per layer
-- ✅ Repository Pattern
-- ✅ Unit of Work Pattern
-- ✅ Result Pattern for clean error handling
+- Repository Pattern
+- Unit of Work Pattern
+- Result Pattern
+- Dependency Injection per layer
+- AutoMapper for consistent mapping
 
 ---
 
 ## 🔐 Authentication & Authorization
 
 - ASP.NET Core Identity
-- User Registration & Login
-- Email Verification (verify now or later)
-- Forgot / Reset / Change Password
-- Role-based Authorization
+- Registration & Login
+- Email verification (supported workflows):
+  - Verify during login **or**
+  - Allow login and verify later
+- Role-based authorization:
   - **Admin**
   - **Customer**
+- Password management:
+  - Change Password
+  - Forgot Password
+  - Reset Password
+
+---
+
+## 📧 Email Integration (Brevo)
+
+Brevo Email Sender is used for:
+- Email confirmation
+- Password reset
+- Notifications
+
+Implemented as a dedicated service and injected via DI.
 
 ---
 
 ## 🛍️ E-Commerce Features
 
-- Product listing with:
-  - Pagination
-  - Single-column Sorting
-  - Search (by Name or Brand)
-- Shopping Cart:
-  - Cookie-based storage
-  - JSON serialization → encoding → storage
-  - `TempData.Keep()` support for multi-step usage
-- Upload & Delete product images
-- PayPal payment integration
+### Products
+- Pagination
+- Sorting (single column)
+- Search (Name / Brand)
+
+### Image Handling
+- Upload product images
+- Safe delete from storage when removing/updating a product image
+
+### TempData
+- Alerts & notifications
+- `TempData.Keep()` for multi-step flows
 
 ---
 
-## 📧 Email Service
+## 🛒 Shopping Cart
 
-- Email sending via **Brevo**
-- Used for:
-  - Account confirmation
-  - Password reset
-  - Notifications
-
----
-
-## 💳 Payments
-
-- PayPal payment gateway integration
-- Secure checkout flow
+Cookie-based cart implementation:
+- Stored as **JSON**
+- Encoded before storage
+- Decoded + deserialized on each request  
+Designed to work across multiple requests/pages without session dependence.
 
 ---
 
-## 🎯 Additional Features
+## 💳 Payment (PayPal)
 
-- TempData alerts for UI feedback
-- Clean separation of concerns
-- Scalable and extensible architecture
-- Beginner-to-intermediate friendly structure
-
----
-
-## 🚀 Purpose of the Project
-
-This project was built as a **learning and practice application** to apply:
-- Clean architecture concepts
-- Design patterns
-- ASP.NET Core Identity
-- Real-world MVC project structure
+PayPal integration included in the checkout workflow:
+- Payment confirmation
+- Order completion after successful payment
 
 ---
 
-## 📌 Technologies Used
+## 📁 Solution Structure (Top Level)
 
-- ASP.NET Core MVC
-- Entity Framework Core
-- SQL Server
-- AutoMapper
-- PayPal SDK
-- Brevo Email API
-
----
-
-## 👨‍💻 Author
-
-**Youssef Mohamad Abdelfattah**  
-Full Stack Web Developer  
-
----
-
-⭐ If you like the project, feel free to star the repository!
+```text
+.
+├─ BestStore.Shared
+├─ BestStore.Infrastructure
+├─ BestStore.Application
+├─ BestStore.Web
+└─ BestStore.slnx
